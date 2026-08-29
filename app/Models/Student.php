@@ -50,4 +50,39 @@ class Student extends Model
     {
         return $this->hasMany(Enrollment::class);
     }
+
+    public function attendanceSummaries(): HasMany
+    {
+        return $this->hasMany(AttendanceSummary::class);
+    }
+
+    public function extracurricularRecords(): HasMany
+    {
+        return $this->hasMany(ExtracurricularRecord::class);
+    }
+
+    public function pklRecords(): HasMany
+    {
+        return $this->hasMany(PKLRecord::class);
+    }
+
+    public function ukkRecords(): HasMany
+    {
+        return $this->hasMany(UKKRecord::class);
+    }
+
+    public function diplomaScores(): HasMany
+    {
+        return $this->hasMany(DiplomaScore::class);
+    }
+
+    public function graduation(): HasOne
+    {
+        return $this->hasOne(Graduation::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(StudentDocument::class);
+    }
 }

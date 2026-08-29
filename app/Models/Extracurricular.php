@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Competency extends Model
+class Extracurricular extends Model
 {
     protected $fillable = [
-        'code',
         'name',
-        'short_name',
         'is_active',
     ];
 
@@ -20,8 +19,8 @@ class Competency extends Model
         ];
     }
 
-    public function ukkRecords(): HasMany
+    public function records(): HasMany
     {
-        return $this->hasMany(UKKRecord::class);
+        return $this->hasMany(ExtracurricularRecord::class);
     }
 }

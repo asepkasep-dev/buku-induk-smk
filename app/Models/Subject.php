@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Competency extends Model
+class Subject extends Model
 {
     protected $fillable = [
         'code',
         'name',
-        'short_name',
+        'category',
         'is_active',
     ];
 
@@ -20,8 +20,8 @@ class Competency extends Model
         ];
     }
 
-    public function ukkRecords(): HasMany
+    public function diplomaScores(): HasMany
     {
-        return $this->hasMany(UKKRecord::class);
+        return $this->hasMany(DiplomaScore::class);
     }
 }

@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Competency extends Model
+class Curriculum extends Model
 {
     protected $fillable = [
-        'code',
         'name',
-        'short_name',
+        'version',
         'is_active',
+        'notes',
     ];
 
     protected function casts(): array
@@ -18,10 +18,5 @@ class Competency extends Model
         return [
             'is_active' => 'boolean',
         ];
-    }
-
-    public function ukkRecords(): HasMany
-    {
-        return $this->hasMany(UKKRecord::class);
     }
 }
