@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        DB::statement("
+            ALTER TABLE enrollments
+            ADD CONSTRAINT enrollments_status_check
+            CHECK (status IN (
+                'ACTIVE',
+                'INACTIVE',
+                'CANCELLED'
+            ))
+        ");
+    }
+
+    public function down(): void
+    {
+        DB::statement("
+            ALTER TABLE enrollments
+            DROP CONSTRAINT IF EXISTS enrollments_status_check
+        ");
+    }
+};
