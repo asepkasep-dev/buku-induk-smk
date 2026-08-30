@@ -43,4 +43,9 @@ class Rombel extends Model
     {
         return $this->hasMany(ClassAssignment::class);
     }
+
+    public function operatorRombelScopes(): HasMany
+    {
+        return $this->hasMany(OperatorRombelScope::class);
+    }
 }
