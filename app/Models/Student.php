@@ -85,4 +85,9 @@ class Student extends Model
     {
         return $this->hasMany(StudentDocument::class);
     }
+
+    public function studentGuardians(): HasMany
+    {
+        return $this->hasMany(StudentGuardian::class);
+    }
 }
