@@ -181,7 +181,6 @@ class HomeroomScopeTestSeeder extends Seeder
             ['code' => 'TEST-MTK'],
             [
                 'name' => 'Matematika Uji',
-                'category' => 'GENERAL',
                 'is_active' => true,
             ]
         );
@@ -195,7 +194,6 @@ class HomeroomScopeTestSeeder extends Seeder
                 'semester_number' => 1,
             ],
             [
-                'category' => 'GENERAL',
                 'is_active' => true,
             ]
         );

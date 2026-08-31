@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\ReportScore;
 
 class Student extends Model
 {
@@ -95,5 +96,10 @@ class Student extends Model
     {
         return $this->student_id !== null
             && $this->student_id === $student->id;
+    }
+
+    public function reportScores(): HasMany
+    {
+        return $this->hasMany(ReportScore::class);
     }
 }

@@ -12,7 +12,6 @@ class CurriculumSubject extends Model
         'curriculum_id',
         'subject_id',
         'competency_id',
-        'category',
         'grade',
         'semester_number',
         'is_active',
