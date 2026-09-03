@@ -291,15 +291,15 @@ new class extends Component
                                         </td>
 
                                         <td class="px-4 py-3">
-                                            @can('update', $score)
+                                            @can('view', $score)
                                                 <a
                                                     href="{{ route('report-scores.edit', $score) }}"
                                                     class="text-blue-600 hover:underline"
                                                 >
-                                                    Edit
+                                                    Lihat Nilai
                                                 </a>
                                             @else
-                                                <span class="text-gray-400">-</span>
+                                                <span>-</span>
                                             @endcan
                                         </td>
                                     </tr>
