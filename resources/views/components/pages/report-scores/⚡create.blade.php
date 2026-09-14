@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AuditLog;
 use App\Models\ReportScore;
 use App\Models\Student;
 use App\Models\SubjectOffering;
@@ -160,6 +161,17 @@ new class extends Component
             'letter_grade' => $validated['letterGrade'],
             'description' => $validated['description'],
             'status' => 'DRAFT',
+        ]);
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'CREATE_REPORT_SCORE',
+            'resource_type' => ReportScore::class,
+            'resource_id' => $reportScore->id,
+            'before_data' => null,
+            'after_data' => $reportScore->fresh()->toArray(),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
         ]);
 
         session()->flash(
