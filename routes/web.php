@@ -23,6 +23,20 @@ Route::livewire('/students/{student}', 'pages.students.show')
     ->middleware('auth')
     ->name('students.show');
 
+Route::livewire(
+    '/students/{student}/report-scores',
+    'pages.report-scores.index'
+)
+    ->middleware('auth')
+    ->name('report-scores.index');
+
+Route::livewire(
+    '/students/{student}/report-scores/create',
+    'pages.report-scores.create'
+)
+    ->middleware('auth')
+    ->name('report-scores.create');
+
 Route::livewire('/report-scores/{reportScore}/edit', 'pages.report-scores.edit')
     ->middleware('auth')
     ->name('report-scores.edit');

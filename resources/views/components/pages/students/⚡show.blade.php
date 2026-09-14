@@ -37,6 +37,14 @@ new class extends Component
         >
             Kembali
         </a>
+
+        <a
+            href="{{ route('report-scores.index', $student) }}"
+            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        >
+            Nilai Rapor
+        </a>
+
     </div>
 
     <div class="mt-6 rounded-lg border bg-white p-6">
