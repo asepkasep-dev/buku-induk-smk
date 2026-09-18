@@ -7,6 +7,10 @@ new class extends Component
 {
     public Student $student;
 
+    public ?int $semesterId = null;
+
+    public array $semesterOptions = [];
+
     public function mount(Student $student): void
     {
         $this->authorize('view', $student);
@@ -15,6 +19,35 @@ new class extends Component
             'reportScores.subjectOffering.curriculumSubject.subject',
             'reportScores.subjectOffering.semester.academicYear',
         ]);
+
+        $this->semesterOptions = $this->student->reportScores
+            ->map(fn ($score) => $score->subjectOffering?->semester)
+            ->filter()
+            ->unique('id')
+            ->sortBy([
+                fn ($a, $b) =>
+                    ($a->academic_year_id ?? 0)
+                    <=>
+                    ($b->academic_year_id ?? 0),
+
+                fn ($a, $b) =>
+                    ($a->number ?? 0)
+                    <=>
+                    ($b->number ?? 0),
+            ])
+            ->mapWithKeys(function ($semester) {
+                return [
+                    $semester->id =>
+                        ($semester->academicYear?->name ?? '-')
+                        . ' — '
+                        . ($semester->name ?? '-'),
+                ];
+            })
+            ->all();
+
+        $this->semesterId = collect($this->semesterOptions)
+            ->keys()
+            ->last();
     }
 };
 ?>
@@ -34,7 +67,10 @@ new class extends Component
         <div class="flex items-center gap-3">
             @can('create', App\Models\ReportScore::class)
                 <a
-                    href="{{ route('report-scores.create', $student) }}"
+                    href="{{ route('report-scores.create', [
+                        'student' => $student,
+                        'semester' => $semesterId,
+                    ]) }}"
                     class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                 >
                     Tambah Nilai
@@ -49,6 +85,25 @@ new class extends Component
             </a>
         </div>
     </div>
+
+    @if (! empty($semesterOptions))
+        <div class="mt-6 max-w-md">
+            <label class="block text-sm font-medium">
+                Semester
+            </label>
+
+            <select
+                wire:model.live="semesterId"
+                class="mt-1 w-full rounded-lg border px-3 py-2"
+            >
+                @foreach ($semesterOptions as $id => $label)
+                    <option value="{{ $id }}">
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    @endif
 
     <div class="mt-6 rounded-lg border bg-white p-6">
         @if ($student->reportScores->isEmpty())
@@ -73,6 +128,13 @@ new class extends Component
                     <tbody>
                         @foreach (
                             $student->reportScores
+                                ->when(
+                                    $semesterId,
+                                    fn ($scores) => $scores->filter(
+                                        fn ($score) =>
+                                            $score->subjectOffering?->semester_id == $semesterId
+                                    )
+                                )
                                 ->sortBy([
                                     fn ($a, $b) =>
                                         ($a->subjectOffering?->semester?->academic_year_id ?? 0)

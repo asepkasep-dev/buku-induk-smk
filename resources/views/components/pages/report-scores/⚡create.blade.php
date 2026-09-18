@@ -10,6 +10,8 @@ new class extends Component
 {
     public Student $student;
 
+    public ?int $semesterId = null;
+
     public ?int $subjectOfferingId = null;
 
     public ?int $finalScore = null;
@@ -20,12 +22,26 @@ new class extends Component
 
     public array $offeringOptions = [];
 
+    public ?string $semesterLabel = null;
+
     public function mount(Student $student): void
     {
         $this->authorize('view', $student);
         $this->authorize('create', ReportScore::class);
 
         $this->student = $student;
+
+        $this->semesterId = request()->integer('semester') ?: null;
+        if ($this->semesterId) {
+            $semester = App\Models\Semester::with('academicYear')->find($this->semesterId);
+
+            if ($semester) {
+                $this->semesterLabel =
+                    ($semester->academicYear?->name ?? '-')
+                    . ' — '
+                    . ($semester->name ?? '-');
+            }
+        }
 
         $enrollment = $student->enrollments()
             ->where('status', 'ACTIVE')
@@ -55,6 +71,10 @@ new class extends Component
                     'academic_year_id',
                     $enrollment->academic_year_id
                 );
+
+                if ($this->semesterId) {
+                    $query->where('id', $this->semesterId);
+                }
             })
             ->get()
             ->mapWithKeys(function (SubjectOffering $offering) {
@@ -128,6 +148,9 @@ new class extends Component
                     'academic_year_id',
                     $enrollment->academic_year_id
                 );
+                if ($this->semesterId) {
+                    $query->where('id', $this->semesterId);
+                }
             })
             ->first();
 
@@ -196,6 +219,11 @@ new class extends Component
             <p class="mt-1 text-sm text-gray-500">
                 {{ $student->full_name ?? '-' }}
             </p>
+                @if ($semesterLabel)
+                    <p class="mt-1 text-sm font-medium text-gray-700">
+                        Semester: {{ $semesterLabel }}
+                    </p>
+                @endif
         </div>
 
         <a
