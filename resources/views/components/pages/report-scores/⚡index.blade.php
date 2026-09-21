@@ -176,16 +176,45 @@ new class extends Component
                                 </td>
 
                                 <td class="px-3 py-3">
-                                    {{ $score->status }}
+                                    @php
+                                        $statusClass = match ($score->status) {
+                                            'DRAFT' => 'bg-gray-100 text-gray-700',
+                                            'LOCKED' => 'bg-amber-100 text-amber-800',
+                                            'FINALIZED' => 'bg-green-100 text-green-800',
+                                            default => 'bg-gray-100 text-gray-700',
+                                        };
+
+                                        $statusLabel = match ($score->status) {
+                                            'DRAFT' => 'Draft',
+                                            'LOCKED' => 'Terkunci',
+                                            'FINALIZED' => 'Final',
+                                            default => $score->status,
+                                        };
+                                    @endphp
+
+                                    <span
+                                        class="inline-flex rounded-full px-3 py-1 text-xs font-medium {{ $statusClass }}"
+                                    >
+                                        {{ $statusLabel }}
+                                    </span>
                                 </td>
 
                                 <td class="px-3 py-3">
                                     @can('view', $score)
+                                        @php
+                                            $actionLabel = match ($score->status) {
+                                                'DRAFT' => 'Edit',
+                                                'LOCKED' => 'Proses',
+                                                'FINALIZED' => 'Lihat',
+                                                default => 'Lihat',
+                                            };
+                                        @endphp
+
                                         <a
                                             href="{{ route('report-scores.edit', $score) }}"
                                             class="text-blue-600 hover:underline"
                                         >
-                                            Lihat
+                                            {{ $actionLabel }}
                                         </a>
                                     @else
                                         <span>-</span>
