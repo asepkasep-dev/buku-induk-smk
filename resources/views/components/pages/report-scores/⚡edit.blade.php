@@ -243,83 +243,115 @@ new class extends Component
         </div>
 
         @if ($reportScore->status === 'DRAFT')
-            <form wire:submit="save" class="mt-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-medium">
-                        Nilai Akhir
-                    </label>
+            @can('update', $reportScore)
+                <form wire:submit="save" class="mt-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">
+                            Nilai Akhir
+                        </label>
 
-                    <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        wire:model="finalScore"
-                        class="mt-1 w-full rounded-lg border px-3 py-2"
-                    >
-
-                    @error('finalScore')
-                        <div class="mt-1 text-sm text-red-600">
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium">
-                        Nilai Huruf
-                    </label>
-
-                    <input
-                        type="text"
-                        wire:model="letterGrade"
-                        class="mt-1 w-full rounded-lg border px-3 py-2"
-                    >
-
-                    @error('letterGrade')
-                        <div class="mt-1 text-sm text-red-600">
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium">
-                        Deskripsi
-                    </label>
-
-                    <textarea
-                        wire:model="description"
-                        rows="4"
-                        class="mt-1 w-full rounded-lg border px-3 py-2"
-                    ></textarea>
-
-                    @error('description')
-                        <div class="mt-1 text-sm text-red-600">
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
-
-                <div class="flex gap-3">
-                    <button
-                        type="submit"
-                        class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white"
-                    >
-                        Simpan
-                    </button>
-
-                    @can('lock', $reportScore)
-                        <button
-                            type="button"
-                            wire:click="lockScore"
-                            wire:confirm="Yakin ingin mengunci nilai ini?"
-                            class="rounded-lg bg-amber-600 px-4 py-2 font-medium text-white"
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            wire:model="finalScore"
+                            class="mt-1 w-full rounded-lg border px-3 py-2"
                         >
-                            Kunci Nilai
+
+                        @error('finalScore')
+                            <div class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium">
+                            Nilai Huruf
+                        </label>
+
+                        <input
+                            type="text"
+                            wire:model="letterGrade"
+                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                        >
+
+                        @error('letterGrade')
+                            <div class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium">
+                            Deskripsi
+                        </label>
+
+                        <textarea
+                            wire:model="description"
+                            rows="4"
+                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                        ></textarea>
+
+                        @error('description')
+                            <div class="mt-1 text-sm text-red-600">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button
+                            type="submit"
+                            class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white"
+                        >
+                            Simpan
                         </button>
-                    @endcan
+
+                        @can('lock', $reportScore)
+                            <button
+                                type="button"
+                                wire:click="lockScore"
+                                wire:confirm="Yakin ingin mengunci nilai ini?"
+                                class="rounded-lg bg-amber-600 px-4 py-2 font-medium text-white"
+                            >
+                                Kunci Nilai
+                            </button>
+                        @endcan
+                    </div>
+                </form>
+
+            @else
+                <div class="mt-6 rounded-lg bg-gray-50 p-4">
+                    <p class="text-sm text-gray-600">
+                        Nilai masih berstatus draft dan hanya dapat dilihat.
+                    </p>
+
+                    <div class="mt-4 grid gap-4 md:grid-cols-3">
+                        <div>
+                            <div class="text-sm text-gray-500">Nilai Akhir</div>
+                            <div class="mt-1 font-medium">
+                                {{ $reportScore->final_score ?? '-' }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-sm text-gray-500">Nilai Huruf</div>
+                            <div class="mt-1 font-medium">
+                                {{ $reportScore->letter_grade ?? '-' }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-sm text-gray-500">Deskripsi</div>
+                            <div class="mt-1 font-medium">
+                                {{ $reportScore->description ?? '-' }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            @endcan
 
         @elseif ($reportScore->status === 'LOCKED')
             <div class="mt-6">

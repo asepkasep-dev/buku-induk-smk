@@ -202,10 +202,9 @@ new class extends Component
                                 <td class="px-3 py-3">
                                     @can('view', $score)
                                         @php
-                                            $actionLabel = match ($score->status) {
-                                                'DRAFT' => 'Edit',
-                                                'LOCKED' => 'Proses',
-                                                'FINALIZED' => 'Lihat',
+                                            $actionLabel = match (true) {
+                                                auth()->user()->can('update', $score) => 'Edit',
+                                                auth()->user()->can('finalize', $score) => 'Proses',
                                                 default => 'Lihat',
                                             };
                                         @endphp
