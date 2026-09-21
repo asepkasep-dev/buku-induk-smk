@@ -23,6 +23,8 @@ new class extends Component
 
     public string $correctionReason = '';
 
+    public array $auditLogs = [];
+
     public function mount(ReportScore $reportScore): void
     {
         $this->authorize('view', $reportScore);
@@ -40,6 +42,28 @@ new class extends Component
         $this->correctionFinalScore = $reportScore->final_score;
         $this->correctionLetterGrade = $reportScore->letter_grade;
         $this->correctionDescription = $reportScore->description;
+        $this->loadAuditLogs();
+    }
+
+    public function loadAuditLogs(): void
+    {
+        $this->auditLogs = AuditLog::query()
+            ->with('user')
+            ->where('resource_type', ReportScore::class)
+            ->where('resource_id', $this->reportScore->id)
+            ->latest('id')
+            ->get()
+            ->map(function (AuditLog $log) {
+                return [
+                    'id' => $log->id,
+                    'action' => $log->action,
+                    'user_name' => $log->user?->name ?? '-',
+                    'before_data' => $log->before_data,
+                    'after_data' => $log->after_data,
+                    'created_at' => $log->created_at?->format('d-m-Y H:i'),
+                ];
+            })
+            ->all();
     }
 
     public function save(): void
@@ -83,6 +107,8 @@ new class extends Component
             'user_agent' => request()->userAgent(),
         ]);
 
+        $this->loadAuditLogs();
+
         session()->flash('success', 'Nilai rapor berhasil disimpan.');
     }
 
@@ -93,6 +119,8 @@ new class extends Component
 
         $this->reportScore->refresh();
 
+        $this->loadAuditLogs();
+
         session()->flash('success', 'Nilai rapor berhasil dikunci.');
     }
 
@@ -102,6 +130,8 @@ new class extends Component
             ->finalize(auth()->user(), $this->reportScore);
 
         $this->reportScore->refresh();
+
+        $this->loadAuditLogs();
 
         $this->correctionFinalScore = $this->reportScore->final_score;
         $this->correctionLetterGrade = $this->reportScore->letter_grade;
@@ -131,6 +161,8 @@ new class extends Component
         );
 
         $this->reportScore->refresh();
+
+        $this->loadAuditLogs();
 
         $this->finalScore = $this->reportScore->final_score;
         $this->letterGrade = $this->reportScore->letter_grade;
@@ -408,6 +440,95 @@ new class extends Component
                     </button>
                 </form>
             @endcan
+        @endif
+    </div>
+
+    <div class="mt-6 rounded-lg border bg-white p-6">
+        <div>
+            <h2 class="text-lg font-semibold">
+                Riwayat Perubahan Nilai
+            </h2>
+
+            <p class="mt-1 text-sm text-gray-500">
+                Riwayat aktivitas yang berkaitan dengan nilai rapor ini.
+            </p>
+        </div>
+
+        @if (empty($auditLogs))
+            <div class="mt-4 text-sm text-gray-500">
+                Belum ada riwayat perubahan.
+            </div>
+        @else
+            <div class="mt-6 overflow-x-auto">
+                <table class="w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b text-left">
+                            <th class="px-3 py-3">Waktu</th>
+                            <th class="px-3 py-3">Pengguna</th>
+                            <th class="px-3 py-3">Aktivitas</th>
+                            <th class="px-3 py-3">Nilai Sebelum</th>
+                            <th class="px-3 py-3">Nilai Sesudah</th>
+                            <th class="px-3 py-3">Alasan Koreksi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($auditLogs as $log)
+                            @php
+                                $beforeScore = data_get(
+                                    $log,
+                                    'before_data.final_score'
+                                );
+
+                                $afterScore = data_get(
+                                    $log,
+                                    'after_data.final_score'
+                                );
+
+                                $correctionReason = data_get(
+                                    $log,
+                                    'after_data.correction_reason'
+                                );
+
+                                $actionLabel = match ($log['action']) {
+                                    'CREATE_REPORT_SCORE' => 'Membuat Nilai',
+                                    'UPDATE_REPORT_SCORE' => 'Mengubah Nilai',
+                                    'LOCK_REPORT_SCORE' => 'Mengunci Nilai',
+                                    'FINALIZE_REPORT_SCORE' => 'Finalisasi Nilai',
+                                    'CORRECT_FINALIZED_REPORT_SCORE' => 'Koreksi Nilai Final',
+                                    default => $log['action'],
+                                };
+                            @endphp
+
+                            <tr class="border-b align-top">
+                                <td class="px-3 py-3 whitespace-nowrap">
+                                    {{ $log['created_at'] ?? '-' }}
+                                </td>
+
+                                <td class="px-3 py-3">
+                                    {{ $log['user_name'] ?? '-' }}
+                                </td>
+
+                                <td class="px-3 py-3">
+                                    {{ $actionLabel }}
+                                </td>
+
+                                <td class="px-3 py-3">
+                                    {{ $beforeScore ?? '-' }}
+                                </td>
+
+                                <td class="px-3 py-3">
+                                    {{ $afterScore ?? '-' }}
+                                </td>
+
+                                <td class="px-3 py-3">
+                                    {{ $correctionReason ?? '-' }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
     </div>
 </div>
