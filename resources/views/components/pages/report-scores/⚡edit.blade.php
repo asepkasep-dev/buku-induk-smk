@@ -231,17 +231,6 @@ new class extends Component
             </div>
         </div>
 
-        <div class="mt-4 rounded-lg border p-3 text-sm">
-            Debug user:
-            {{ auth()->user()?->email ?? '-' }}
-            |
-            Role:
-            {{ auth()->user()?->role?->code ?? '-' }}
-            |
-            Can correct:
-            {{ auth()->user()?->can('correct', $reportScore) ? 'YES' : 'NO' }}
-        </div>
-
         @if ($reportScore->status === 'DRAFT')
             @can('update', $reportScore)
                 <form wire:submit="save" class="mt-6 space-y-4">
