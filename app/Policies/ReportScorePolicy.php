@@ -56,7 +56,7 @@ class ReportScorePolicy
             return false;
         }
 
-        if ($reportScore->status === 'FINALIZED') {
+        if ($reportScore->status !== 'DRAFT') {
             return false;
         }
 

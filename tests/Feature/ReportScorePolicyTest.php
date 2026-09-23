@@ -20,7 +20,7 @@ function makePolicyUser(
         }
     };
 
-    $role = new Role();
+    $role = new Role;
 
     $role->forceFill([
         'code' => $roleCode,
@@ -42,7 +42,7 @@ function makeReportScore(
     string $status,
     int $studentId = 1
 ): ReportScore {
-    $reportScore = new ReportScore();
+    $reportScore = new ReportScore;
 
     $reportScore->forceFill([
         'student_id' => $studentId,
@@ -56,7 +56,7 @@ test('student cannot update own draft report score', function () {
     $user = makePolicyUser('STUDENT', 1);
     $reportScore = makeReportScore('DRAFT', 1);
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->update($user, $reportScore)
@@ -67,7 +67,7 @@ test('admin can update draft report score', function () {
     $user = makePolicyUser('ADMIN');
     $reportScore = makeReportScore('DRAFT');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->update($user, $reportScore)
@@ -78,7 +78,7 @@ test('admin cannot update finalized report score', function () {
     $user = makePolicyUser('ADMIN');
     $reportScore = makeReportScore('FINALIZED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->update($user, $reportScore)
@@ -89,7 +89,7 @@ test('admin can correct finalized report score', function () {
     $user = makePolicyUser('ADMIN');
     $reportScore = makeReportScore('FINALIZED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->correct($user, $reportScore)
@@ -100,7 +100,7 @@ test('operator cannot correct finalized report score', function () {
     $user = makePolicyUser('OPERATOR');
     $reportScore = makeReportScore('FINALIZED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->correct($user, $reportScore)
@@ -111,7 +111,7 @@ test('admin can finalize locked report score', function () {
     $user = makePolicyUser('ADMIN');
     $reportScore = makeReportScore('LOCKED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->finalize($user, $reportScore)
@@ -122,7 +122,7 @@ test('admin cannot finalize draft report score', function () {
     $user = makePolicyUser('ADMIN');
     $reportScore = makeReportScore('DRAFT');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->finalize($user, $reportScore)
@@ -133,7 +133,7 @@ test('operator cannot finalize locked report score', function () {
     $user = makePolicyUser('OPERATOR');
     $reportScore = makeReportScore('LOCKED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->finalize($user, $reportScore)
@@ -144,7 +144,7 @@ test('admin can lock draft report score', function () {
     $user = makePolicyUser('ADMIN');
     $reportScore = makeReportScore('DRAFT');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->lock($user, $reportScore)
@@ -155,7 +155,7 @@ test('admin cannot lock already locked report score', function () {
     $user = makePolicyUser('ADMIN');
     $reportScore = makeReportScore('LOCKED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->lock($user, $reportScore)
@@ -170,7 +170,7 @@ test('admin cannot update draft report score without permission', function () {
 
     $reportScore = makeReportScore('DRAFT');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->update($user, $reportScore)
@@ -185,7 +185,7 @@ test('admin cannot correct finalized report score without permission', function 
 
     $reportScore = makeReportScore('FINALIZED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->correct($user, $reportScore)
@@ -200,7 +200,7 @@ test('admin cannot lock draft report score without permission', function () {
 
     $reportScore = makeReportScore('DRAFT');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->lock($user, $reportScore)
@@ -215,9 +215,15 @@ test('admin cannot finalize locked report score without permission', function ()
 
     $reportScore = makeReportScore('LOCKED');
 
-    $policy = new ReportScorePolicy();
+    $policy = new ReportScorePolicy;
 
     expect(
         $policy->finalize($user, $reportScore)
     )->toBeFalse();
 });
+test('staff cannot update a locked report score', function (string $role) {
+    $user = makePolicyUser($role);
+    $reportScore = makeReportScore('LOCKED');
+
+    expect((new ReportScorePolicy)->update($user, $reportScore))->toBeFalse();
+})->with(['ADMIN', 'OPERATOR', 'WALI_KELAS']);
