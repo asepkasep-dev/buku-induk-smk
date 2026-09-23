@@ -77,3 +77,31 @@ test('student receives 403 when opening another student report score list', func
         ->test('pages.report-scores.index', ['student' => $otherStudent])
         ->assertForbidden();
 });
+
+test('admin can open a student report score list and see the add score button', function () {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+
+    $student = Student::create([
+        'nis' => 'TEST-LIVEWIRE-001',
+        'full_name' => 'Siswa Livewire Test',
+        'gender' => 'L',
+        'entry_year' => 2099,
+        'status' => 'AKTIF',
+    ]);
+
+    $admin = User::factory()->create([
+        'role_id' => Role::where('code', 'ADMIN')->firstOrFail()->id,
+        'student_id' => null,
+    ]);
+
+    $this->actingAs($admin)
+        ->get(route('report-scores.index', $student))
+        ->assertOk()
+        ->assertSeeLivewire('pages.report-scores.index');
+
+    Livewire::actingAs($admin)
+        ->test('pages.report-scores.index', ['student' => $student])
+        ->assertSee($student->full_name)
+        ->assertSee('Tambah Nilai')
+        ->assertSeeHtml('href="'.route('report-scores.create', $student).'"');
+});
