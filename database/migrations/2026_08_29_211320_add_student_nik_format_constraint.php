@@ -16,9 +16,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE students
             DROP CONSTRAINT IF EXISTS students_nik_format_check
-        ");
+        ');
     }
 };

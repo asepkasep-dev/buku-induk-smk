@@ -20,9 +20,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE enrollments
             DROP CONSTRAINT IF EXISTS enrollments_status_check
-        ");
+        ');
     }
 };

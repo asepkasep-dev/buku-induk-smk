@@ -23,9 +23,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE student_guardians
             DROP CONSTRAINT IF EXISTS student_guardians_relationship_check
-        ");
+        ');
     }
 };

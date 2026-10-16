@@ -13,7 +13,7 @@ class ReportScoreWorkflowService
     public function lock(User $user, ReportScore $reportScore): ReportScore
     {
         if (! $user->can('lock', $reportScore)) {
-            throw new AuthorizationException();
+            throw new AuthorizationException;
         }
 
         return DB::transaction(function () use ($user, $reportScore) {
@@ -43,7 +43,7 @@ class ReportScoreWorkflowService
     public function finalize(User $user, ReportScore $reportScore): ReportScore
     {
         if (! $user->can('finalize', $reportScore)) {
-            throw new AuthorizationException();
+            throw new AuthorizationException;
         }
 
         return DB::transaction(function () use ($user, $reportScore) {
@@ -79,7 +79,7 @@ class ReportScoreWorkflowService
         string $reason
     ): ReportScore {
         if (! $user->can('correct', $reportScore)) {
-            throw new AuthorizationException();
+            throw new AuthorizationException;
         }
 
         if (trim($reason) === '') {

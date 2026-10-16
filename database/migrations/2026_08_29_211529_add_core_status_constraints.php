@@ -43,19 +43,19 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE students
             DROP CONSTRAINT IF EXISTS students_status_check
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE report_scores
             DROP CONSTRAINT IF EXISTS report_scores_status_check
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE graduations
             DROP CONSTRAINT IF EXISTS graduations_status_check
-        ");
+        ');
     }
 };

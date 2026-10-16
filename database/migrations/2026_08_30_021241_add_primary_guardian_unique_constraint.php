@@ -7,17 +7,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("
+        DB::statement('
             CREATE UNIQUE INDEX student_guardians_one_primary_per_student
             ON student_guardians (student_id)
             WHERE is_primary = true
-        ");
+        ');
     }
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             DROP INDEX IF EXISTS student_guardians_one_primary_per_student
-        ");
+        ');
     }
 };

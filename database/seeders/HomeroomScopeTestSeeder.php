@@ -5,19 +5,20 @@ namespace Database\Seeders;
 use App\Models\AcademicYear;
 use App\Models\ClassAssignment;
 use App\Models\Competency;
+use App\Models\Curriculum;
+use App\Models\CurriculumSubject;
 use App\Models\Enrollment;
-use App\Models\Rombel;
+use App\Models\OperatorRombelScope;
+use App\Models\ReportScore;
 use App\Models\Role;
+use App\Models\Rombel;
+use App\Models\Semester;
 use App\Models\Student;
+use App\Models\Subject;
+use App\Models\SubjectOffering;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Curriculum;
-use App\Models\CurriculumSubject;
-use App\Models\ReportScore;
-use App\Models\Semester;
-use App\Models\Subject;
-use App\Models\SubjectOffering;
 
 class HomeroomScopeTestSeeder extends Seeder
 {
@@ -146,7 +147,7 @@ class HomeroomScopeTestSeeder extends Seeder
             ]
         );
 
-        \App\Models\OperatorRombelScope::updateOrCreate(
+        OperatorRombelScope::updateOrCreate(
             [
                 'user_id' => $operator->id,
                 'rombel_id' => $rombel->id,

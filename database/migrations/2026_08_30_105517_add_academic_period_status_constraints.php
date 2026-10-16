@@ -22,14 +22,14 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE academic_years
             DROP CONSTRAINT IF EXISTS academic_years_status_check
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE semesters
             DROP CONSTRAINT IF EXISTS semesters_status_check
-        ");
+        ');
     }
 };

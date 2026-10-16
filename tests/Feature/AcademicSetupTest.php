@@ -161,4 +161,3 @@ test('operator cannot open the academic setup page', function () {
 
     $this->actingAs($operator)->get(route('admin.academic-setup'))->assertForbidden();
 });
-

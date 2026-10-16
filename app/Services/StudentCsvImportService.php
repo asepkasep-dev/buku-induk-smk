@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\Student;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Http\UploadedFile;
 
 class StudentCsvImportService
 {
@@ -60,6 +59,7 @@ class StudentCsvImportService
                 }
                 if (count($values) !== count($headers)) {
                     $errors[] = "Baris {$line}: jumlah kolom tidak sama dengan baris judul.";
+
                     continue;
                 }
 
@@ -101,6 +101,7 @@ class StudentCsvImportService
                             $errors[] = "Baris {$line}: {$message}";
                         }
                     }
+
                     continue;
                 }
 

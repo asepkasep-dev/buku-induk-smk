@@ -16,9 +16,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE student_documents
             DROP CONSTRAINT IF EXISTS student_documents_status_check
-        ");
+        ');
     }
 };

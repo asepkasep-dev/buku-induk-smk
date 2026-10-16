@@ -49,7 +49,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE class_assignments
             ADD CONSTRAINT class_assignments_date_range_check
             CHECK (
@@ -57,7 +57,7 @@ return new class extends Migration
                 OR start_date IS NULL
                 OR end_date >= start_date
             )
-        ");
+        ');
     }
 
     public function down(): void

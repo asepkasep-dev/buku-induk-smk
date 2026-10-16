@@ -16,9 +16,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE subjects
             DROP CONSTRAINT IF EXISTS subjects_category_check
-        ");
+        ');
     }
 };

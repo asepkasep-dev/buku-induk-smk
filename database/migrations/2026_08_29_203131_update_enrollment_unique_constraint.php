@@ -25,9 +25,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             DROP INDEX IF EXISTS enrollments_one_active_per_year
-        ");
+        ');
 
         Schema::table('enrollments', function (Blueprint $table) {
             $table->unique([

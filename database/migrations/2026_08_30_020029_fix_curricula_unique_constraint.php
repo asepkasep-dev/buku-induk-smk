@@ -13,18 +13,18 @@ return new class extends Migration
             $table->dropUnique(['name', 'version']);
         });
 
-        DB::statement("
+        DB::statement('
             CREATE UNIQUE INDEX curricula_name_version_unique
             ON curricula (name, version)
             NULLS NOT DISTINCT
-        ");
+        ');
     }
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             DROP INDEX IF EXISTS curricula_name_version_unique
-        ");
+        ');
 
         Schema::table('curricula', function (Blueprint $table) {
             $table->unique(['name', 'version']);

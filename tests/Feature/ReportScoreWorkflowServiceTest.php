@@ -4,6 +4,7 @@ use App\Models\AuditLog;
 use App\Models\ReportScore;
 use App\Models\User;
 use App\Services\ReportScoreWorkflowService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -456,7 +457,7 @@ test('lock rejects unauthorized user', function () {
     expect(
         fn () => $service->lock($user, $reportScore)
     )->toThrow(
-        Illuminate\Auth\Access\AuthorizationException::class
+        AuthorizationException::class
     );
 
     $reportScore->refresh();
@@ -504,7 +505,7 @@ test('finalize rejects unauthorized user', function () {
     expect(
         fn () => $service->finalize($user, $reportScore)
     )->toThrow(
-        Illuminate\Auth\Access\AuthorizationException::class
+        AuthorizationException::class
     );
 
     $reportScore->refresh();
@@ -561,7 +562,7 @@ test('correct rejects unauthorized user', function () {
             'Uji otorisasi koreksi'
         )
     )->toThrow(
-        Illuminate\Auth\Access\AuthorizationException::class
+        AuthorizationException::class
     );
 
     $reportScore->refresh();

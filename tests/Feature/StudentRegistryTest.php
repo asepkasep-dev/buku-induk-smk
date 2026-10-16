@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\AuditLog;
 use App\Models\AcademicYear;
+use App\Models\AuditLog;
 use App\Models\Competency;
 use App\Models\Enrollment;
 use App\Models\Role;

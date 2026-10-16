@@ -13,7 +13,7 @@ return new class extends Migration
             $table->dropUnique('curriculum_subject_unique');
         });
 
-        DB::statement("
+        DB::statement('
             CREATE UNIQUE INDEX curriculum_subject_unique
             ON curriculum_subjects (
                 curriculum_id,
@@ -23,14 +23,14 @@ return new class extends Migration
                 semester_number
             )
             NULLS NOT DISTINCT
-        ");
+        ');
     }
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             DROP INDEX IF EXISTS curriculum_subject_unique
-        ");
+        ');
 
         Schema::table('curriculum_subjects', function (Blueprint $table) {
             $table->unique(

@@ -28,19 +28,19 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE pkl_records
             DROP CONSTRAINT IF EXISTS pkl_records_status_check
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE ukk_records
             DROP CONSTRAINT IF EXISTS ukk_records_status_check
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE diploma_scores
             DROP CONSTRAINT IF EXISTS diploma_scores_status_check
-        ");
+        ');
     }
 };

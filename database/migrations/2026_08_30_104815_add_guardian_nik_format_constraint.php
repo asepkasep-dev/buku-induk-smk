@@ -16,9 +16,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE guardians
             DROP CONSTRAINT IF EXISTS guardians_nik_format_check
-        ");
+        ');
     }
 };

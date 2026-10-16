@@ -113,4 +113,3 @@ test('server command resets a password, clears remembered sessions, and stores n
     expect($audit->after_data)->toBe(['changed' => true, 'source' => 'server_console'])
         ->and(json_encode($audit->after_data))->not->toContain('NewPassword');
 });
-

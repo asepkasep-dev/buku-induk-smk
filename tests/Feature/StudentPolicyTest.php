@@ -3,8 +3,8 @@
 use App\Models\AcademicYear;
 use App\Models\Competency;
 use App\Models\Enrollment;
-use App\Models\Rombel;
 use App\Models\Role;
+use App\Models\Rombel;
 use App\Models\Student;
 use App\Models\User;
 use Database\Seeders\CompetencySeeder;

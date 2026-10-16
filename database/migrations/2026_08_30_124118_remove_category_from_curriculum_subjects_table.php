@@ -9,10 +9,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("
+        DB::statement('
             ALTER TABLE curriculum_subjects
             DROP CONSTRAINT IF EXISTS curriculum_subjects_category_check
-        ");
+        ');
 
         Schema::table('curriculum_subjects', function (Blueprint $table) {
             $table->dropColumn('category');
