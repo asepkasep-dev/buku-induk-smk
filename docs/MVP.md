@@ -16,7 +16,7 @@ Kalimat uji MVP: *"Seorang wali kelas dapat mengisi ledger nilai Pengetahuan & K
 |---|---|---|
 | M1 | Ledger nilai per mapel (item PJ/KK, skor 0–100) | CRUD item saat DRAFT; minimal 1 PJ & 1 KK dapat divalidasi; data tersimpan di `report_score_items` |
 | M2 | Rata-rata & nilai akhir terhitung | `final_score` header = gabungan rata-rata PJ & KK dengan **bobot per mapel** (diubah kapan pun saat DRAFT → recompute); tidak dapat diketik manual |
-| M3 | Predikat + ketuntasan otomatis | huruf/predikat dari `grade_scales` (default A≥90/B/C/D, dikelola Admin); **status TUNTAS/BELUM TUNTAS** dihitung dari nilai akhir vs **KKM per mapel** (diinput sekolah) |
+| M3 | Predikat + ketuntasan dari KKM | predikat A/B/C/D **langsung dihitung dari KKM** (`I=(100−KKM)/3`, batas riil/ceil); TUNTAS/BELUM TUNTAS = nilai akhir ≥ KKM; KKM default 70, wajib diisi sebelum finalisasi. **Tanpa** tabel grade_scales |
 | M4 | Deskripsi capaian | ter-generate otomatis dari item tertinggi/terendah; editable saat DRAFT |
 | M5 | Halaman rapor siswa × semester | identitas + kop/logo sekolah, tabel mapel, kehadiran, ekskul, **PKL, UKK, nilai ijazah**, catatan wali, blok tanda tangan |
 | M6 | Cetak rapor on-demand | print CSS A4 presisi via browser; hasil print preview = tampilan layar; jalan offline di LAN |
@@ -53,6 +53,6 @@ Kalimat uji MVP: *"Seorang wali kelas dapat mengisi ledger nilai Pengetahuan & K
 
 Tidak ada lagi yang memblokir mulai koding. Ringkasan (detail PRD §9):
 - Bobot PJ:KK **per mata pelajaran**, ubah kapan pun (recompute agregat).
-- Ambang huruf predikat default A≥90/B 80–89/C 70–79/D <70 dikelola Admin via `grade_scales`; **ketuntasan mengacu KKM per mapel yang diinput sekolah**.
+- Predikat **langsung diturunkan dari KKM per mapel** (`I=(100−KKM)/3`, batas riil/ceil); tidak ada tabel `grade_scales`/halaman kelola predikat. KKM default 70, wajib diisi sebelum finalisasi.
 - Rapor memuat mapel + kehadiran + ekskul + **PKL + UKK + ijazah**.
 - Fase 2 menyertakan **upload logo/kop** + **batch export PDF (dompdf)**; cetak on-demand tetap via print CSS browser.

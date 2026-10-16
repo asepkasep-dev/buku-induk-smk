@@ -69,27 +69,23 @@ report_score_items
   timestamps
   INDEX (report_score_id, type)
 
-grade_scales
-  id, type ENUM('PENGETAHUAN','KETERAMPILAN','AKHIR') nullable=global,
-  min_score SMALLINT, max_score SMALLINT,
-  letter VARCHAR(2), predicate VARCHAR,
-  is_active, timestamps
-  (seed default: A 90-100 Sangat Baik; B 80-89; C 70-79; D 0-69)
-
 subject_offerings (kolom baru untuk bobot & KKM per mapel)
   pengetahuan_weight SMALLINT default 50,
   keterampilan_weight SMALLINT default 50,   (pengetahuan+keterampilan = 100)
-  kkm SMALLINT nullable                        (KKM per mapel, diinput sekolah)
+  kkm SMALLINT default 70                     (KKM per mapel; diinput sekolah/guru)
 ```
 
-Bobot disimpan **per offering** (satu mapel di satu rombel×semester) sehingga guru mapel dapat mengatur & mengubah kapan pun; perubahan bobot/KKM pada offering memicu recompute semua `report_scores` turunan offering itu. Status TUNTAS/BELUM TUNTAS = `final_score >= kkm`.
+Tidak ada tabel `grade_scales` — predikat **murni diturunkan dari KKM**. Bobot & KKM disimpan **per offering** (satu mapel di satu rombel×semester) sehingga guru mapel dapat mengatur/mengubah kapan pun; perubahan memicu recompute semua `report_scores` turunan offering itu.
+
+Aturan predikat (`GradePredicateResolver`), interval `I = (100 − kkm) / 3`, batas riil (ceil):
+`D: < kkm`, `C: [kkm, kkm+I)`, `B: [kkm+I, kkm+2I)`, `A: [kkm+2I, 100]`. Ketuntasan = `final_score >= kkm`. Wajib KKM terisi sebelum finalisasi.
 
 `report_scores` berubah peran: header + **kolom turunan** (`pengetahuan_avg`, `keterampilan_avg`, `final_score`, `letter_grade`, `description` ter-generate). Input manual ke kolom turunan dihapus dari UI; satu-satunya write-path nilai = lewat ledger.
 
 ### Layanan baru (pola mengikuti `ReportScoreWorkflowService`)
 
 - `ReportScoreLedgerService` — CRUD item + recompute agregat + transisi DRAFT-guard + audit, semua `DB::transaction`+`lockForUpdate`.
-- `GradePredicateResolver` — skor → letter/predikat dari `grade_scales`.
+- `GradePredicateResolver` — skor + KKM offering → huruf/predikat (interval `(100−KKM)/3`, batas riil/ceil).
 - `ReportDescriptionGenerator` — teks capaian dari item (2 tertinggi, 1 terendah).
 - `ReportCardAssembler` — menyusun data rapor siswa×semester (mapel + kehadiran + ekskul + **PKL + UKK + ijazah** + identitas + kop/logo + penanda tangan) untuk view, print CSS, dan PDF.
 - `ReportCardPdfService` — render blade rapor ke PDF via `barryvdh/laravel-dompdf`; generator batch per rombel×semester → simpan banyak PDF ke ZIP (Storage) untuk diunduh.
@@ -136,4 +132,4 @@ Bobot disimpan **per offering** (satu mapel di satu rombel×semester) sehingga g
 - **Livewire single-file, bukan Inertia/Livewire class terpisah** — sudah jadi konvensi repo, cocok untuk tim 1 orang + AI agent.
 - **Cetak dua jalur: print-browser untuk on-demand + dompdf untuk batch** — on-demand tanpa beban server; PDF server-side hanya saat ekspor massal per rombel (keputusan pemilik 2026-10-16).
 - **Ledger sebagai anak report_scores (bukan replace)** — mempertahankan workflow/audit Fase 0 dan unik (siswa × offering).
-- **Bobot per offering (`subject_offerings`), ambang predikat di `grade_scales`** — guru mapel mengubah bobot & Admin mengubah kebijakan tanpa deploy kode.
+- **Bobot & KKM per offering (`subject_offerings`)** — predikat diturunkan langsung dari KKM, tanpa tabel ambang; guru mapel mengubah bobot/KKM tanpa deploy kode.

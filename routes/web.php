@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Student;
 use App\Models\StudentDocument;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return auth()->check()
@@ -14,7 +14,6 @@ Route::get('/', function () {
 Route::livewire('/login', 'pages.auth.login')
     ->middleware(['guest', 'throttle:10,1'])
     ->name('login');
-
 
 Route::livewire('/dashboard', 'pages.dashboard')
     ->middleware('auth')
@@ -42,6 +41,7 @@ Route::livewire('/students/import', 'pages.students.import')
 
 Route::get('/students/import-template', function () {
     abort_unless(auth()->user()?->can('create', Student::class) && auth()->user()?->role?->code === 'ADMIN', 403);
+
     return response()->streamDownload(function (): void {
         $stream = fopen('php://output', 'wb');
         fputcsv($stream, ['nis', 'nisn', 'nik', 'full_name', 'gender', 'entry_year', 'status', 'phone', 'email', 'address']);
@@ -65,6 +65,7 @@ Route::get('/students/{student}/documents/{document}/download', function (Studen
     abort_unless(Storage::disk('local')->exists($document->file_path), 404);
     $name = basename(str_replace('\\', '/', $document->file_name));
     $name = preg_replace('/[\r\n"]/', '_', $name);
+
     return Storage::disk('local')->download($document->file_path, $name);
 })->middleware('auth')->name('students.documents.download');
 
@@ -89,3 +90,8 @@ Route::livewire(
 Route::livewire('/report-scores/{reportScore}/edit', 'pages.report-scores.edit')
     ->middleware('auth')
     ->name('report-scores.edit');
+
+// --- STUB Fase 1 (tampilan e-rapor; backend menyusul) ---
+Route::livewire('/e-rapor/ledger', 'pages.report-scores.ledger')
+    ->middleware('auth')
+    ->name('erdapor.ledger');

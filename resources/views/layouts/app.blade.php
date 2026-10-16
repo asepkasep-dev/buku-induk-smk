@@ -37,6 +37,12 @@
                                     Pengelolaan Akun
                                 </a>
                             @endif
+
+                            @if (in_array(auth()->user()->role?->code, ['ADMIN', 'WALI_KELAS', 'OPERATOR'], true))
+                                <a href="{{ route('erdapor.ledger') }}" class="text-purple-600 hover:underline">
+                                    Nilai E-Rapor (demo)
+                                </a>
+                            @endif
                         </nav>
                     </div>
 

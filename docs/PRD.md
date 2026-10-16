@@ -58,10 +58,16 @@ Sudah tersedia (bukti di kode):
 - Nilai akhir mapel = gabungan rata-rata Pengetahuan & Keterampilan dengan **bobot per mata pelajaran** (mis. 60:40), diatur wali kelas/operator dan **dapat diubah kapan pun** selama DRAFT; perubahan memicu recompute agregat.
 - Ledger hanya dapat diubah selama status `DRAFT`.
 
-**Predikat otomatis (mengacu KKM).**
-- Sekolah menginput **KKM (Kriteria Ketuntasan Minimal)** per mata pelajaran (kolom `kkm` pada offering; input oleh Admin/wali).
-- Ketuntasan (TUNTAS/BELUM TUNTAS) ditentukan dari nilai akhir vs KKM mapel.
-- Hurul/predikat dari tabel `grade_scales` (kelola Admin: default A≥90/B 80–89/C 70–79/D<70); ambang dapat diubah, dan garis "tuntas" mengikuti KKM per mapel.
+**Predikat otomatis (langsung dari KKM — tanpa tabel ambang).**
+- Sekolah/guru menginput **KKM (Kriteria Ketuntasan Minimal)** per mata pelajaran (kolom `kkm` pada offering). Bila belum diisi, default **70**, dan **wajib diisi sebelum finalisasi**.
+- Ketuntasan: `TUNTAS` jika nilai akhir ≥ KKM, selainnya `BELUM TUNTAS`.
+- **Predikat diturunkan dari KKM** dengan interval `I = (100 − KKM) / 3` dan titik potong riil (batas bawah tiap pita = integer pertama ≥ titik potong, `ceil`):
+  - `D` : nilai < KKM
+  - `C` : KKM ≤ nilai < KKM + I
+  - `B` : KKM + I ≤ nilai < KKM + 2I
+  - `A` : KKM + 2I ≤ nilai ≤ 100
+- Contoh: KKM 70 → C 70–79 / B 80–89 / A 90–100. KKM 75 (I=8,33) → C 75–83 / B 84–91 / A 92–100.
+- Tidak ada lagi tabel `grade_scales` / halaman "Kelola Predikat"; predikat murni fungsi dari KKM + nilai akhir.
 
 **Deskripsi capaian otomatis.**
 - Generator teks per mapel: menyebut 2 nilai tertinggi dan 1 terendah dari item Pengetahuan (pola "dengan kemampuan …, siswa perlu peningkatan pada …") + predikat. Editable selama DRAFT.
@@ -112,7 +118,7 @@ Setiap fase harus meninggalkan suite Pest yang hijau sebelum lanjut.
 | Fase | Isi | Ekspor utama |
 |---|---|---|
 | **0 — Fondasi** | buku induk, authz, catatan akademik, nilai tunggal + workflow, deploy LAN | ✅ selesai |
-| **1 — Ledger & Predikat** | tabel `report_score_items` + `grade_scales`; UI input ledger (Alpine); hitung rata-rata, predikat & deskripsi otomatis; migrasi data `report_scores` lama ke 1 item agregat per tipe | backend nilai e-rapor |
+| **1 — Ledger & Predikat** | tabel `report_score_items`; kolom bobot & KKM di `subject_offerings`; UI input ledger (Alpine); hitung rata-rata, predikat (dari KKM) & deskripsi otomatis; migrasi data `report_scores` lama ke 1 item agregat per tipe | backend nilai e-rapor |
 | **2 — Rapor & Cetak** | halaman rapor siswa×semester (mapel + kehadiran + ekskul + PKL + UKK + ijazah), rekap kelas wali, print CSS A4 + kop/logo/tanda tangan (upload logo), **batch export PDF server-side** (ZIP per rombel/semester), pembatasan akses | rapor tercetak + PDF massal |
 | **3 — Finalisasi Massal & Kontrol Mutu** | lock massal per rombel/semester dg validasi kelengkapan, dashboard kelengkapan admin, uji koreksi teraudit | alur semester penuh |
 | **4 — Hardening & Uji Lapangan** | perbaikan temuan review (RefreshDatabase test, service split `records`, controller routes), uji install/restore di PC kandidat, backup terenkripsi | siap dipakai sekolah |
@@ -136,7 +142,7 @@ Setiap fase harus meninggalkan suite Pest yang hijau sebelum lanjut.
 ## 9. Keputusan Final Pemilik (2026-10-16)
 
 1. **Bobot PJ:KK tidak fixed** — dapat diatur per mata pelajaran, kapan pun.
-2. **Ambang predikat** A≥90 / B 80–89 / C 70–79 / D <70 — disetujui sebagai default (tetap dapat dikelola Admin via `grade_scales`).
+2. **Predikat langsung dari KKM** (keputusan final 2026-10-16): interval `I=(100−KKM)/3`, batas pakai titik potong riil (ceil). **Tidak ada** tabel `grade_scales`/halaman kelola predikat. KKM default 70 bila kosong, wajib diisi sebelum finalisasi.
 3. **Rapor memuat** nilai rapor per mapel + kehadiran + ekstrakurikuler + PKL + UKK + nilai ijazah, termasuk cetak/PDF rapor.
 4. **Kop & tanda tangan** dimasukkan Fase 2, **termasuk upload logo sekolah**.
 5. **Batch export PDF (dulunya Fase 5) dinaikkan ke MVP.**
