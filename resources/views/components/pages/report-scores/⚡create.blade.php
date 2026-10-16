@@ -100,6 +100,7 @@ new class extends Component
 
     public function save()
     {
+        $this->authorize('view', $this->student);
         $this->authorize('create', ReportScore::class);
 
         $validated = $this->validate([

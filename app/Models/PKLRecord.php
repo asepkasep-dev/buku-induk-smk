@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PKLRecord extends Model
 {
+    protected $table = 'pkl_records';
+
     protected $fillable = [
         'student_id',
         'partner_name',

@@ -5,6 +5,11 @@ use Livewire\Component;
 
 new class extends Component
 {
+    public function mount(): void
+    {
+        $this->authorize('viewAny', Student::class);
+    }
+
     public function with(): array
     {
         $user = auth()->user();
@@ -27,7 +32,19 @@ new class extends Component
 ?>
 
 <div>
-    <h1 class="text-2xl font-semibold">Daftar Siswa</h1>
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-semibold">Daftar Siswa</h1>
+        @can('create', App\Models\Student::class)
+            <div class="flex gap-2">
+                @if (auth()->user()->role?->code === 'ADMIN')
+                    <a href="{{ route('students.import') }}" class="rounded-lg border bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">Impor CSV</a>
+                @endif
+                <a href="{{ route('students.create') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                    Tambah siswa
+                </a>
+            </div>
+        @endcan
+    </div>
 
     <div class="mt-6 overflow-hidden rounded-lg border bg-white">
         <table class="min-w-full divide-y">
@@ -49,12 +66,16 @@ new class extends Component
                         <td class="px-4 py-3">{{ $student->entry_year }}</td>
                         <td class="px-4 py-3">{{ $student->status }}</td>
                         <td class="px-4 py-3">
-                            <a
-                                href="{{ route('students.show', $student) }}"
-                                class="text-blue-600 hover:underline"
-                            >
-                                Lihat
-                            </a>
+                            <div class="flex gap-3">
+                                <a href="{{ route('students.show', $student) }}" class="text-blue-600 hover:underline">
+                                    Lihat
+                                </a>
+                                @can('update', $student)
+                                    <a href="{{ route('students.edit', $student) }}" class="text-blue-600 hover:underline">
+                                        Ubah
+                                    </a>
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                 @empty

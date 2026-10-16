@@ -23,9 +23,20 @@
                                 Dashboard
                             </a>
 
-                            <a href="{{ route('students.index') }}" class="text-blue-600 hover:underline">
-                                Siswa
-                            </a>
+                            @if (auth()->user()->hasPermission('VIEW_STUDENT'))
+                                <a href="{{ route('students.index') }}" class="text-blue-600 hover:underline">
+                                    Siswa
+                                </a>
+                            @endif
+
+                            @if (auth()->user()->role?->code === 'ADMIN')
+                                <a href="{{ route('admin.academic-setup') }}" class="text-blue-600 hover:underline">
+                                    Pengaturan Akademik
+                                </a>
+                                <a href="{{ route('admin.users') }}" class="text-blue-600 hover:underline">
+                                    Pengelolaan Akun
+                                </a>
+                            @endif
                         </nav>
                     </div>
 

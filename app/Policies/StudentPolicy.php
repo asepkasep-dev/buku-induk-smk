@@ -61,7 +61,9 @@ class StudentPolicy
         }
 
         if ($user->role?->code === 'OPERATOR') {
-            return true;
+            return $user->accessibleStudentsAsOperator()
+                ->whereKey($student->id)
+                ->exists();
         }
 
         return false;

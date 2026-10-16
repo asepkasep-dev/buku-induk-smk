@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UKKRecord extends Model
 {
+    protected $table = 'ukk_records';
+
     protected $fillable = [
         'student_id',
         'competency_id',

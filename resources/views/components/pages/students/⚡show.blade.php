@@ -11,13 +11,18 @@ new class extends Component
     {
         $this->authorize('view', $student);
 
-        $this->student = $student->load([
+        $relations = [
             'enrollments.academicYear',
             'enrollments.rombel.competency',
-            'studentGuardians.guardian',
             'reportScores.subjectOffering.curriculumSubject.subject',
             'reportScores.subjectOffering.semester.academicYear',
-        ]);
+        ];
+
+        if (auth()->user()->hasPermission('MANAGE_GUARDIAN')) {
+            $relations[] = 'studentGuardians.guardian';
+        }
+
+        $this->student = $student->load($relations);
     }
 };
 ?>
@@ -38,11 +43,24 @@ new class extends Component
             Kembali
         </a>
 
+        @can('update', $student)
+            <a
+                href="{{ route('students.edit', $student) }}"
+                class="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+                Ubah data siswa
+            </a>
+        @endcan
+
         <a
             href="{{ route('report-scores.index', $student) }}"
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
             Nilai Rapor
+        </a>
+
+        <a href="{{ route('students.records', $student) }}" class="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50">
+            Catatan Akademik
         </a>
 
     </div>
@@ -107,7 +125,6 @@ new class extends Component
             </div>
         </dl>
     </div>
-
     <div class="mt-6 rounded-lg border bg-white p-6">
         <h2 class="text-lg font-semibold">Alamat & Kontak</h2>
 
@@ -196,6 +213,7 @@ new class extends Component
         </div>
     </div>
 
+    @if (auth()->user()->hasPermission('MANAGE_GUARDIAN'))
     <div class="mt-6 rounded-lg border bg-white p-6">
         <h2 class="text-lg font-semibold">Data Orang Tua / Wali</h2>
 
@@ -245,6 +263,7 @@ new class extends Component
             </table>
         </div>
     </div>
+    @endif
 
     <div class="mt-6 rounded-lg border bg-white p-6">
         <h2 class="text-lg font-semibold">Nilai Rapor</h2>

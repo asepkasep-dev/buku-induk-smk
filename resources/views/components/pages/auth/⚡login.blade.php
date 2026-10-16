@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 new class extends Component
@@ -16,15 +18,28 @@ new class extends Component
             'password' => ['required'],
         ]);
 
+        $key = Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $this->addError(
+                'email',
+                'Terlalu banyak percobaan. Coba lagi dalam '.RateLimiter::availableIn($key).' detik.'
+            );
+
+            return;
+        }
+
         if (! Auth::attempt([
             'email' => $this->email,
             'password' => $this->password,
         ])) {
+            RateLimiter::hit($key, 60);
             $this->addError('email', 'Email atau password salah.');
 
             return;
         }
 
+        RateLimiter::clear($key);
         session()->regenerate();
 
         return redirect()->route('dashboard');

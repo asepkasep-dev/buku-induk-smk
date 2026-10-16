@@ -363,3 +363,158 @@ test('final score correction requires a reason and does not write on failure', f
     $this->assertDatabaseHas('report_scores', ['id' => $score->id, 'final_score' => 81, 'status' => 'FINALIZED']);
     $this->assertDatabaseCount('audit_logs', 0);
 });
+
+test('create rechecks class access after the form was opened', function (string $role) {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $user = reportScoreLivewireUser($role, $fixture['student']);
+    $page = Livewire::actingAs($user)
+        ->test('pages.report-scores.create', ['student' => $fixture['student']])
+        ->set('subjectOfferingId', $fixture['offering']->id)
+        ->set('finalScore', 85);
+    $user->operatorRombelScopes()->update(['is_active' => false]);
+    $user->classAssignments()->update(['status' => 'INACTIVE']);
+
+    $page->call('save')->assertForbidden();
+
+    $this->assertDatabaseCount('report_scores', 0);
+    $this->assertDatabaseCount('audit_logs', 0);
+})->with(['OPERATOR', 'WALI_KELAS']);
+
+test('create rechecks permissions after the form was opened', function (string $permissionCode) {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $admin = reportScoreLivewireUser('ADMIN', $fixture['student']);
+    $page = Livewire::actingAs($admin)
+        ->test('pages.report-scores.create', ['student' => $fixture['student']])
+        ->set('subjectOfferingId', $fixture['offering']->id)
+        ->set('finalScore', 85);
+    $permission = $admin->role->permissions()->where('code', $permissionCode)->firstOrFail();
+    $admin->role->permissions()->detach($permission->id);
+
+    $page->call('save')->assertForbidden();
+
+    $this->assertDatabaseCount('report_scores', 0);
+    $this->assertDatabaseCount('audit_logs', 0);
+})->with(['VIEW_STUDENT', 'INPUT_REPORT_SCORE']);
+
+test('assigned staff can create a report score for their student', function (string $role) {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $user = reportScoreLivewireUser($role, $fixture['student']);
+
+    $page = Livewire::actingAs($user)
+        ->test('pages.report-scores.create', ['student' => $fixture['student']])
+        ->set('subjectOfferingId', $fixture['offering']->id)
+        ->set('finalScore', 85)->call('save')->assertHasNoErrors();
+
+    $score = ReportScore::sole();
+    $page->assertRedirect(route('report-scores.edit', $score));
+    $this->assertDatabaseHas('report_scores', [
+        'id' => $score->id, 'student_id' => $fixture['student']->id,
+        'subject_offering_id' => $fixture['offering']->id, 'final_score' => 85, 'status' => 'DRAFT',
+    ]);
+    $log = AuditLog::sole();
+    expect($log->action)->toBe('CREATE_REPORT_SCORE');
+    expect($log->user_id)->toBe($user->id);
+    expect($log->resource_id)->toBe($score->id);
+})->with(['OPERATOR', 'WALI_KELAS']);
+
+test('create excludes and rejects a subject offering from another class', function () {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $admin = reportScoreLivewireUser('ADMIN', $fixture['student']);
+    $otherClass = $fixture['offering']->rombel->replicate();
+    $otherClass->name = 'X RPL Lain';
+    $otherClass->save();
+    $otherOffering = $fixture['offering']->replicate();
+    $otherOffering->rombel_id = $otherClass->id;
+    $otherOffering->save();
+
+    $page = Livewire::actingAs($admin)
+        ->test('pages.report-scores.create', ['student' => $fixture['student']]);
+    expect(array_keys($page->get('offeringOptions')))->toBe([$fixture['offering']->id]);
+    $page->set('subjectOfferingId', $otherOffering->id)->set('finalScore', 85)
+        ->call('save')->assertHasErrors(['subjectOfferingId'])
+        ->assertSee('Mata pelajaran tidak sesuai dengan rombel aktif siswa.')
+        ->assertNoRedirect();
+    $this->assertDatabaseCount('report_scores', 0);
+    $this->assertDatabaseCount('audit_logs', 0);
+});
+
+test('create excludes and rejects a subject offering outside the selected semester', function () {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $admin = reportScoreLivewireUser('ADMIN', $fixture['student']);
+    $otherSemester = Semester::create([
+        'academic_year_id' => $fixture['enrollment']->academic_year_id,
+        'number' => 2, 'name' => 'Semester 2', 'status' => 'INACTIVE',
+    ]);
+    $otherOffering = $fixture['offering']->replicate();
+    $otherOffering->semester_id = $otherSemester->id;
+    $otherOffering->save();
+
+    $page = Livewire::actingAs($admin)
+        ->withQueryParams(['semester' => $fixture['offering']->semester_id])
+        ->test('pages.report-scores.create', ['student' => $fixture['student']]);
+    expect(array_keys($page->get('offeringOptions')))->toBe([$fixture['offering']->id]);
+    $page->set('subjectOfferingId', $otherOffering->id)->set('finalScore', 85)
+        ->call('save')->assertHasErrors(['subjectOfferingId'])
+        ->assertSee('Mata pelajaran tidak sesuai dengan rombel aktif siswa.')
+        ->assertNoRedirect();
+    $this->assertDatabaseCount('report_scores', 0);
+    $this->assertDatabaseCount('audit_logs', 0);
+});
+
+test('create excludes and rejects a subject offering outside the enrollment year', function () {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $admin = reportScoreLivewireUser('ADMIN', $fixture['student']);
+    $otherYear = AcademicYear::create([
+        'name' => '2100/2101', 'start_date' => '2100-07-01',
+        'end_date' => '2101-06-30', 'status' => 'INACTIVE',
+    ]);
+    $otherSemester = Semester::create([
+        'academic_year_id' => $otherYear->id,
+        'number' => 1, 'name' => 'Semester 1', 'status' => 'INACTIVE',
+    ]);
+    $otherOffering = $fixture['offering']->replicate();
+    $otherOffering->semester_id = $otherSemester->id;
+    $otherOffering->save();
+
+    $page = Livewire::actingAs($admin)
+        ->test('pages.report-scores.create', ['student' => $fixture['student']]);
+    expect(array_keys($page->get('offeringOptions')))->toBe([$fixture['offering']->id]);
+    $page->set('subjectOfferingId', $otherOffering->id)->set('finalScore', 85)
+        ->call('save')->assertHasErrors(['subjectOfferingId'])
+        ->assertSee('Mata pelajaran tidak sesuai dengan rombel aktif siswa.')
+        ->assertNoRedirect();
+    $this->assertDatabaseCount('report_scores', 0);
+    $this->assertDatabaseCount('audit_logs', 0);
+});
+
+test('create returns 422 when the student has no active enrollment', function () {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $admin = reportScoreLivewireUser('ADMIN', $fixture['student']);
+    $fixture['enrollment']->update(['status' => 'INACTIVE']);
+
+    $this->actingAs($admin)->get(route('report-scores.create', $fixture['student']))
+        ->assertUnprocessable();
+    $this->assertDatabaseCount('report_scores', 0);
+});
+
+test('create rejects saving after the student enrollment becomes inactive', function () {
+    $this->seed([RoleSeeder::class, PermissionSeeder::class]);
+    $fixture = reportScoreLivewireFixture();
+    $admin = reportScoreLivewireUser('ADMIN', $fixture['student']);
+    $page = Livewire::actingAs($admin)
+        ->test('pages.report-scores.create', ['student' => $fixture['student']])
+        ->set('subjectOfferingId', $fixture['offering']->id)->set('finalScore', 85);
+    $fixture['enrollment']->update(['status' => 'INACTIVE']);
+
+    $page->call('save')->assertHasErrors(['subjectOfferingId'])
+        ->assertSee('Siswa tidak memiliki enrollment aktif.')->assertNoRedirect();
+    $this->assertDatabaseCount('report_scores', 0);
+    $this->assertDatabaseCount('audit_logs', 0);
+});
