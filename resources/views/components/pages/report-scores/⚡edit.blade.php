@@ -188,12 +188,21 @@ new class extends Component
             </p>
         </div>
 
-        <a
-            href="{{ route('students.show', $reportScore->student_id) }}"
-            class="text-sm text-blue-600 hover:underline"
-        >
-            Kembali
-        </a>
+        <div class="flex items-center gap-3">
+            <a
+                href="{{ route('students.show', $reportScore->student_id) }}"
+                class="text-sm text-blue-600 hover:underline"
+            >
+                Kembali
+            </a>
+
+            <a
+                href="{{ route('report-scores.ledger', $reportScore) }}"
+                class="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+            >
+                Buka Ledger Nilai
+            </a>
+        </div>
     </div>
 
     @if (session('success'))

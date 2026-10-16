@@ -12,14 +12,25 @@ class SubjectOffering extends Model
         'curriculum_subject_id',
         'rombel_id',
         'semester_id',
+        'pengetahuan_weight',
+        'keterampilan_weight',
+        'kkm',
         'is_active',
     ];
 
     protected function casts(): array
     {
         return [
+            'pengetahuan_weight' => 'integer',
+            'keterampilan_weight' => 'integer',
+            'kkm' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function effectiveKkm(): int
+    {
+        return $this->kkm ?? 70;
     }
 
     public function curriculumSubject(): BelongsTo

@@ -91,7 +91,7 @@ Route::livewire('/report-scores/{reportScore}/edit', 'pages.report-scores.edit')
     ->middleware('auth')
     ->name('report-scores.edit');
 
-// --- STUB Fase 1 (tampilan e-rapor; backend menyusul) ---
-Route::livewire('/e-rapor/ledger', 'pages.report-scores.ledger')
+// --- Ledger nilai e-rapor (Fase 1) ---
+Route::livewire('/report-scores/{reportScore}/ledger', 'pages.report-scores.ledger')
     ->middleware('auth')
-    ->name('erdapor.ledger');
+    ->name('report-scores.ledger');
