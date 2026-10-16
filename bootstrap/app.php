@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Configuration is not loaded yet while the application builder runs.
+        // Read the proxy list directly from the environment at this stage.
+        $middleware->trustProxies(at: env('TRUSTED_PROXIES', '172.29.240.2'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

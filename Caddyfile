@@ -1,0 +1,13 @@
+{
+	default_sni {$APP_HOST}
+}
+
+{$APP_HOST}:443 {
+	tls internal
+	reverse_proxy web:80
+	encode zstd gzip
+}
+
+:80 {
+	redir https://{$APP_HOST}:{$APP_TLS_PORT}{uri} permanent
+}

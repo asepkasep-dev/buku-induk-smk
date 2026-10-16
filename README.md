@@ -1,58 +1,110 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Buku Induk SMK
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi Laravel untuk data siswa dan nilai rapor, disiapkan untuk dipakai bersama di jaringan lokal sekolah. Admin dapat mengatur profil sekolah, tahun ajaran, rombel, kurikulum, penempatan siswa, akun staf, dan cakupan akses.
 
-## About Laravel
+## Menjalankan bersama di jaringan sekolah
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Pola pemasangan yang disediakan memakai satu PC Windows sebagai server dan PostgreSQL di dalam Docker. Guru dan staf membuka aplikasi lewat browser dari PC lain di jaringan yang sama. PC server harus selalu menyala. Jangan jadikan aplikasi sebagai layanan internet publik.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Kebutuhan PC server
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Windows 11 64-bit dengan virtualisasi aktif dan izin memasang Docker Desktop. Windows 10 hanya dipakai jika edisi tersebut masih menerima pembaruan keamanan (misalnya melalui program ESU atau siklus dukungan LTSC); Windows 10 umum telah mencapai akhir dukungan.
+- Docker Desktop dengan Docker Compose v2 dalam mode Linux containers.
+- Koneksi internet saat pemasangan pertama untuk mengambil image dan dependency aplikasi.
+- Alamat IP tetap atau DHCP reservation pada jaringan sekolah.
+- RAM 8 GB atau lebih disarankan jika Docker Desktop berbagi PC dengan pekerjaan lain.
 
-## Learning Laravel
+PC pengguna hanya memerlukan browser modern dan pemasangan sertifikat CA sekolah satu kali.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Sebelum memilih PC server, jalankan `.\scripts\check-school-server.ps1` pada kandidat PC. Hasilnya menandai prasyarat Windows, virtualisasi, RAM, Docker, jaringan, profil firewall, dan akses administrator. Minta persetujuan petugas TI sekolah untuk Docker, sertifikat CA, dan aturan firewall sebelum memasang.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Pemasangan pertama
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+1. Buat paket untuk dipindahkan dengan `.\scripts\package-school-server.ps1`, lalu salin ZIP dan file `.sha256` pendampingnya ke PC server. Verifikasi bahwa nilai pada file `.sha256` sama dengan hasil `Get-FileHash <nama-zip> -Algorithm SHA256`, ekstrak ZIP, lalu buka PowerShell pada folder hasil ekstrak. Paket memuat kode dari working tree saat ini dan mengecualikan konfigurasi rahasia serta data lokal.
+2. Jalankan `.\scripts\install-school-server.ps1`. Skrip membuat `.env.school` berisi kunci aplikasi dan kata sandi database acak, membangun aplikasi, menyiapkan PostgreSQL, menjalankan migration dan seeder, lalu meminta pembuatan akun admin pertama. File rahasia `.env.school` tidak masuk Git.
+3. Skrip membuat aturan firewall untuk port HTTPS dan pengalihan HTTP jika PowerShell dijalankan sebagai Administrator. Jika skrip dijalankan tanpa hak Administrator, pemasangan tetap berjalan tetapi PC lain belum bisa terhubung; jalankan ulang skrip sebagai Administrator atau minta petugas TI membuat aturan TCP 8443 dan 8080 untuk `LocalSubnet` pada profil **Private** atau **Domain**. Aturan tidak dibuka pada profil **Public**.
+4. Salin `certs\school-root-ca.crt` ke setiap PC pengguna. Di PowerShell Administrator pada tiap PC, jalankan:
 
-## Agentic Development
+   ```powershell
+   Import-Certificate -FilePath .\school-root-ca.crt -CertStoreLocation Cert:\LocalMachine\Root
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+5. Buka alamat HTTPS yang dicetak skrip, misalnya `https://192.168.1.20:8443`, lalu masuk dengan akun admin yang baru dibuat.
 
-```bash
-composer require laravel/boost --dev
+### Penyiapan setelah masuk
 
-php artisan boost:install
+1. Di **Pengaturan Akademik**, lengkapi profil sekolah, buat tahun ajaran (semester ganjil/genap dibuat otomatis), lalu aktifkan tahun dan semester yang berlaku.
+2. Tambahkan konsentrasi keahlian, rombel, kurikulum, mata pelajaran, struktur mapel per tingkat/semester, dan penawaran mapel ke rombel.
+3. Tambahkan siswa satu per satu atau gunakan **Impor CSV** dari halaman Siswa. Impor menampilkan pratinjau dan menolak seluruh file jika ada baris atau nomor identitas ganda.
+4. Tempatkan siswa ke rombel dan pastikan penawarannya cocok dengan tingkat, konsentrasi, tahun ajaran, serta semester sebelum memasukkan nilai.
+5. Di **Pengelolaan Akun**, buat akun operator dan wali kelas. Batasi akses operator ke rombel yang menjadi tugasnya dan tugaskan wali kelas ke satu rombel per tahun ajaran.
+
+Jika staf lupa kata sandi, admin server dapat mengatur ulang tanpa menampilkan kata sandi pada riwayat terminal:
+
+```powershell
+docker compose --env-file .env.school run --rm web php artisan school:user-password-reset operator@sekolah.local
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Sertifikat root hanya berisi kunci publik. Salin melalui media atau folder instalasi yang dikelola sekolah. Jangan menyalin direktori data Docker ke PC pengguna.
 
-## Contributing
+Jika alamat IP server berubah, perbarui `APP_HOST` dan `APP_URL` pada `.env.school`, lalu jalankan kembali skrip pemasangan. Atur DHCP reservation agar tautan dan sertifikat tetap berlaku.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Operasi harian
 
-## Code of Conduct
+Docker Desktop menjalankan aplikasi dan database dengan kebijakan restart otomatis. PC server harus tetap menyala dan tersambung ke jaringan sekolah. Untuk melihat status dan log:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```powershell
+docker compose --env-file .env.school ps
+docker compose --env-file .env.school logs --tail 100 web proxy db
+```
 
-## Security Vulnerabilities
+Buat backup berkala di media yang berbeda dari PC server:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```powershell
+.\scripts\backup-school-database.ps1
+```
 
-## License
+Skrip menghentikan aplikasi sebentar agar database dan dokumen cocok dalam satu snapshot. File ZIP mencakup database serta dokumen siswa privat dan **tidak dienkripsi**. Cocokkan SHA-256 dari file `.sha256`, lalu enkripsikan ZIP sebelum menyalinnya ke media berbeda atau simpan pada media terenkripsi dengan akses terbatas. Dekripsikan kembali ke file ZIP aslinya sebelum restore. Lakukan uji pemulihan sebelum mulai memakai data nyata.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Untuk memulihkan backup lengkap **ke server aktif** (database dan dokumen saat ini akan diganti), jalankan:
+
+```powershell
+$backup = Get-ChildItem .\backups\BukuIndukSMK-*.zip | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+.\scripts\restore-school-database.ps1 -BackupPath $backup.FullName
+```
+
+Skrip memverifikasi hash bila file `.sha256` tersedia, meminta konfirmasi ketik `RESTORE`, lalu memulihkan database dan dokumen. File `.dump` lama tetap diterima untuk pemulihan database saja. Jika proses gagal setelah perubahan database dimulai, aplikasi web tetap berhenti agar tidak melayani data yang tidak utuh; periksa log dan pulihkan backup lengkap yang valid sebelum menyalakan web kembali. Gunakan backup dari versi aplikasi yang sama dan uji pemulihan pada salinan server sebelum pemulihan darurat.
+
+Untuk menjalankan seluruh test secara terpisah dari database operasional:
+
+```powershell
+.\scripts\test-school-app.ps1
+```
+
+Skrip ini membuat database PostgreSQL sementara khusus test pada jaringan Docker internal yang terpisah dari database operasional, lalu menghapus container test setelah selesai.
+
+## Pengembangan lokal
+
+Kebutuhan pengembangan adalah PHP **8.4.1 atau lebih baru dalam seri 8.x**, ekstensi `pdo_pgsql`, Composer 2, Node.js 24, dan PostgreSQL. Versi PHP minimum mengikuti dependency terkunci di `composer.lock`.
+
+```powershell
+Copy-Item .env.example .env
+# Atur koneksi PostgreSQL lokal di .env
+composer install
+npm ci
+npm run build
+php artisan key:generate
+php artisan migrate --seed
+php artisan school:user-add admin@sekolah.local ADMIN
+php artisan serve
+```
+
+Jalankan test hanya dengan database PostgreSQL terpisah bernama `buku_induk_smk_test`; jangan mengarahkan test ke database operasional. Admin pertama dibuat lewat perintah `school:user-add` saat pemasangan; setelah login, akun staf dikelola lewat halaman **Pengelolaan Akun**.
+
+## Cakupan aplikasi
+
+Alur yang tersedia meliputi login berbasis peran, data siswa, impor CSV dengan audit, penyiapan struktur akademik, enrollment, akun operator/wali kelas dan pembatasan akses rombel, serta proses nilai rapor. Nilai memiliki status draft/terkunci/final dan aturan audit.
+
+Halaman Catatan Akademik Siswa kini mencakup hubungan orang tua/wali, ringkasan kehadiran, ekstrakurikuler, PKL, UKK, nilai ijazah, dokumen privat, serta alur verifikasi dan finalisasi kelulusan. Catatan memakai status draft dan finalisasi sesuai modul; akses data wali dan dokumen dibatasi ke izin khusus Admin. Verifikasi Docker dan pemasangan LAN tetap harus dilakukan di PC sekolah yang akan dijadikan server sebelum data nyata dimasukkan.
+
+Sebelum mengisi data siswa sungguhan, sekolah perlu menetapkan PC server, pengelola akun, proses backup/pemulihan, serta kebijakan akses sertifikat dan jaringan. Batasi akses firewall ke jaringan lokal sekolah.

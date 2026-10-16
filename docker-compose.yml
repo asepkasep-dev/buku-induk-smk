@@ -1,0 +1,108 @@
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:?Set DB_DATABASE in .env.school}
+      POSTGRES_USER: ${DB_USERNAME:?Set DB_USERNAME in .env.school}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.school}
+    volumes:
+      - school_database:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - school_private
+
+  web:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env.school
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - school_storage:/var/www/html/storage
+    networks:
+      - school_private
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_HOST: ${APP_HOST:?Set APP_HOST in .env.school}
+      APP_TLS_PORT: ${APP_TLS_PORT:-8443}
+    ports:
+      - "${APP_TLS_PORT:-8443}:443"
+      - "${APP_HTTP_PORT:-8080}:80"
+    depends_on:
+      - web
+    networks:
+      school_private:
+        ipv4_address: ${PROXY_INTERNAL_IP:-172.29.240.254}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - school_proxy_data:/data
+      - school_proxy_config:/config
+
+  test-db:
+    image: postgres:18-alpine
+    profiles: ["testing"]
+    environment:
+      POSTGRES_DB: buku_induk_smk_test
+      POSTGRES_USER: ${DB_USERNAME:?Set DB_USERNAME in .env.school}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.school}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - testing_private
+
+  test:
+    profiles: ["testing"]
+    build:
+      context: .
+      target: testing
+    env_file:
+      - .env.school
+    environment:
+      APP_ENV: testing
+      DB_CONNECTION: pgsql
+      DB_HOST: test-db
+      DB_PORT: 5432
+      DB_DATABASE: buku_induk_smk_test
+      SESSION_DRIVER: array
+      SESSION_SECURE_COOKIE: "false"
+      CACHE_STORE: array
+      QUEUE_CONNECTION: sync
+    depends_on:
+      test-db:
+        condition: service_healthy
+    networks:
+      - testing_private
+
+volumes:
+  school_database:
+  school_storage:
+  school_proxy_data:
+  school_proxy_config:
+
+networks:
+  school_private:
+    ipam:
+      config:
+        - subnet: ${DOCKER_SUBNET:-172.29.240.0/24}
+          ip_range: ${DOCKER_IP_RANGE:-172.29.240.0/25}
+  testing_private:
+    internal: true
