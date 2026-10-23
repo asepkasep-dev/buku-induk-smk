@@ -6,4 +6,146 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-brand-50: #eef4ff;
+    --color-brand-100: #dbe6ff;
+    --color-brand-500: #3b6cf6;
+    --color-brand-600: #2554e0;
+    --color-brand-700: #1e40af;
+    --color-brand-800: #1e3a8a;
+
+    --radius-card: 0.875rem;
+
+    --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px -12px rgb(15 23 42 / 0.12);
+    --shadow-lift: 0 12px 32px -12px rgb(15 23 42 / 0.22);
+}
+
+/*
+ * Base styling for form controls so every input across the app is visible and
+ * consistent even when the markup carries no utility classes (Tailwind v4
+ * preflight resets borders to 0 width, which previously made inputs "invisible"
+ * against the background). Utility classes in component markup still win here.
+ */
+@layer base {
+    body {
+        @apply antialiased text-gray-900;
+    }
+
+    input,
+    select,
+    textarea {
+        @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400;
+    }
+
+    select {
+        @apply pr-9;
+    }
+
+    textarea {
+        @apply min-h-24 resize-y;
+    }
+
+    input[type='checkbox'],
+    input[type='radio'] {
+        @apply size-4 w-auto shrink-0 rounded border-gray-300 bg-white text-brand-600 shadow-none focus:ring-2 focus:ring-brand-500/40;
+    }
+
+    input[type='file'] {
+        @apply px-3 py-2 text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-brand-600 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-white hover:file:bg-brand-700;
+    }
+
+    label {
+        @apply text-sm font-medium text-gray-700;
+    }
+}
+
+@utility field-label {
+    @apply mb-1.5 block text-sm font-medium text-gray-700;
+}
+
+@utility field-error {
+    @apply mt-1.5 text-sm font-medium text-rose-600;
+}
+
+@utility btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:pointer-events-none disabled:opacity-60;
+}
+
+@utility btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:pointer-events-none disabled:opacity-60;
+}
+
+@utility card {
+    @apply rounded-card border bg-white shadow-card transition-all duration-200 ease-out;
+}
+
+@utility card-hover {
+    @apply hover:-translate-y-0.5 hover:shadow-lift;
+}
+
+@layer components {
+    .stat-card {
+        @apply card card-hover p-5;
+    }
+
+    .badge {
+        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    }
+
+    .badge-gray {
+        @apply bg-gray-100 text-gray-700;
+    }
+
+    .badge-green {
+        @apply bg-green-100 text-green-700;
+    }
+
+    .badge-amber {
+        @apply bg-amber-100 text-amber-800;
+    }
+
+    .badge-blue {
+        @apply bg-brand-50 text-brand-700;
+    }
+
+    .badge-rose {
+        @apply bg-rose-100 text-rose-700;
+    }
+
+    .app-nav-link {
+        @apply rounded-md px-2.5 py-1 text-sm font-medium text-brand-700 transition-colors duration-150 hover:bg-brand-50 hover:text-brand-800;
+    }
+
+    .app-nav-link-active {
+        @apply bg-brand-50 text-brand-800;
+    }
+
+    .fade-in-up {
+        animation: fade-in-up 0.5s ease-out both;
+    }
+
+    .animate-reveal {
+        animation: fade-in-up 0.45s ease-out both;
+    }
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
 }

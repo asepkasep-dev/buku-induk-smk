@@ -4,6 +4,8 @@ use App\Models\Student;
 use App\Models\StudentDocument;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 Route::get('/', function () {
     return auth()->check()
@@ -42,12 +44,25 @@ Route::livewire('/students/import', 'pages.students.import')
 Route::get('/students/import-template', function () {
     abort_unless(auth()->user()?->can('create', Student::class) && auth()->user()?->role?->code === 'ADMIN', 403);
 
-    return response()->streamDownload(function (): void {
-        $stream = fopen('php://output', 'wb');
-        fputcsv($stream, ['nis', 'nisn', 'nik', 'full_name', 'gender', 'entry_year', 'status', 'phone', 'email', 'address']);
-        fputcsv($stream, ['SMK-001', '', '', 'Nama Siswa', 'L', now()->year, 'CALON', '', '', '']);
-        fclose($stream);
-    }, 'template-impor-siswa.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    $spreadsheet = new Spreadsheet;
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Siswa');
+    $sheet->fromArray([
+        ['nis', 'nisn', 'nik', 'full_name', 'gender', 'entry_year', 'status', 'phone', 'email', 'address'],
+        ['SMK-001', '', '', 'Nama Siswa', 'L', now()->year, 'CALON', '', '', ''],
+    ], null, 'A1');
+    $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+    foreach (range('A', 'J') as $column) {
+        $sheet->getColumnDimension($column)->setAutoSize(true);
+    }
+
+    return response()->streamDownload(
+        function () use ($spreadsheet): void {
+            (new Xlsx($spreadsheet))->save('php://output');
+        },
+        'template-impor-siswa.xlsx',
+        ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+    );
 })->middleware('auth')->name('students.import-template');
 
 Route::livewire('/students/{student}/edit', 'pages.students.edit')

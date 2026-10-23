@@ -37,16 +37,16 @@ new class extends Component
         @can('create', App\Models\Student::class)
             <div class="flex gap-2">
                 @if (auth()->user()->role?->code === 'ADMIN')
-                    <a href="{{ route('students.import') }}" class="rounded-lg border bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50">Impor CSV</a>
+                    <a href="{{ route('students.import') }}" class="rounded-lg border bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow">Impor CSV</a>
                 @endif
-                <a href="{{ route('students.create') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                <a href="{{ route('students.create') }}" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow">
                     Tambah siswa
                 </a>
             </div>
         @endcan
     </div>
 
-    <div class="mt-6 overflow-hidden rounded-lg border bg-white">
+    <div class="card mt-6 overflow-hidden">
         <table class="min-w-full divide-y">
             <thead class="bg-gray-50">
                 <tr>
@@ -60,11 +60,13 @@ new class extends Component
 
             <tbody class="divide-y">
                 @forelse ($students as $student)
-                    <tr>
+                    <tr class="transition-colors duration-150 hover:bg-slate-50">
                         <td class="px-4 py-3">{{ $student->nis }}</td>
-                        <td class="px-4 py-3">{{ $student->full_name }}</td>
+                        <td class="px-4 py-3 font-medium">{{ $student->full_name }}</td>
                         <td class="px-4 py-3">{{ $student->entry_year }}</td>
-                        <td class="px-4 py-3">{{ $student->status }}</td>
+                        <td class="px-4 py-3">
+                            <x-status-badge :status="$student->status" />
+                        </td>
                         <td class="px-4 py-3">
                             <div class="flex gap-3">
                                 <a href="{{ route('students.show', $student) }}" class="text-blue-600 hover:underline">

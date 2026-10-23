@@ -36,14 +36,24 @@ new class extends Component
             ->orderByDesc('start_date')
             ->first();
 
+        $counts = [
+            'all' => (clone $students)->count(),
+            'active' => (clone $students)->where('status', 'AKTIF')->count(),
+            'candidate' => (clone $students)->where('status', 'CALON')->count(),
+            'graduated' => (clone $students)->where('status', 'LULUS')->count(),
+        ];
+
+        $other = max(0, $counts['all'] - $counts['active'] - $counts['candidate'] - $counts['graduated']);
+
         return [
             'school' => $school,
             'academicYear' => $academicYear,
-            'studentCounts' => [
-                'all' => (clone $students)->count(),
-                'active' => (clone $students)->where('status', 'AKTIF')->count(),
-                'candidate' => (clone $students)->where('status', 'CALON')->count(),
-                'graduated' => (clone $students)->where('status', 'LULUS')->count(),
+            'studentCounts' => $counts,
+            'studentDistribution' => [
+                ['label' => 'Aktif', 'value' => $counts['active'], 'color' => '#16a34a'],
+                ['label' => 'Calon siswa', 'value' => $counts['candidate'], 'color' => '#d97706'],
+                ['label' => 'Lulus', 'value' => $counts['graduated'], 'color' => '#2563eb'],
+                ['label' => 'Lainnya', 'value' => $other, 'color' => '#9ca3af'],
             ],
             'canViewStudents' => $user->hasPermission('VIEW_STUDENT'),
             'canCreateStudents' => $user->can('create', Student::class),
@@ -98,20 +108,56 @@ new class extends Component
     </section>
 
     @if ($canViewStudents)
-        <section aria-labelledby="student-summary-heading">
-            <h2 id="student-summary-heading" class="mb-3 text-lg font-semibold">Ringkasan siswa dalam cakupan akses Anda</h2>
+        <section aria-labelledby="student-summary-heading" class="space-y-4">
+            <h2 id="student-summary-heading" class="text-lg font-semibold">Ringkasan siswa dalam cakupan akses Anda</h2>
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 @foreach ([
-                    ['label' => 'Semua siswa', 'value' => $studentCounts['all'], 'tone' => 'text-gray-900'],
-                    ['label' => 'Siswa aktif', 'value' => $studentCounts['active'], 'tone' => 'text-green-700'],
-                    ['label' => 'Calon siswa', 'value' => $studentCounts['candidate'], 'tone' => 'text-amber-700'],
-                    ['label' => 'Lulus', 'value' => $studentCounts['graduated'], 'tone' => 'text-blue-700'],
-                ] as $card)
-                    <article class="rounded-xl border bg-white p-5 shadow-sm">
+                    ['label' => 'Semua siswa', 'value' => $studentCounts['all'], 'tone' => 'text-gray-900', 'bar' => 'bg-brand-600'],
+                    ['label' => 'Siswa aktif', 'value' => $studentCounts['active'], 'tone' => 'text-green-700', 'bar' => 'bg-green-600'],
+                    ['label' => 'Calon siswa', 'value' => $studentCounts['candidate'], 'tone' => 'text-amber-700', 'bar' => 'bg-amber-500'],
+                    ['label' => 'Lulus', 'value' => $studentCounts['graduated'], 'tone' => 'text-blue-700', 'bar' => 'bg-blue-600'],
+                ] as $i => $card)
+                    <article class="stat-card fade-in-up" style="animation-delay: {{ $i * 70 }}ms">
+                        <span class="mb-3 block h-1 w-10 rounded-full {{ $card['bar'] }}"></span>
                         <p class="text-sm text-gray-500">{{ $card['label'] }}</p>
-                        <p class="mt-2 text-3xl font-semibold {{ $card['tone'] }}">{{ number_format($card['value']) }}</p>
+                        <p class="mt-2 text-3xl font-semibold {{ $card['tone'] }} tabular-nums" data-count-to="{{ $card['value'] }}">{{ number_format($card['value']) }}</p>
                     </article>
                 @endforeach
+            </div>
+
+            @php
+                $distLabels = collect($studentDistribution)->pluck('label');
+                $distValues = collect($studentDistribution)->pluck('value');
+                $distColors = collect($studentDistribution)->pluck('color');
+                $distTotal = $distValues->sum();
+            @endphp
+
+            <div class="card grid gap-6 p-6 md:grid-cols-[minmax(0,220px)_1fr] md:items-center">
+                <div wire:ignore class="relative mx-auto h-44 w-44">
+                    <canvas
+                        data-chart="doughnut"
+                        data-chart-labels="{{ $distLabels->toJson() }}"
+                        data-chart-values="{{ $distValues->toJson() }}"
+                        data-chart-colors="{{ $distColors->toJson() }}"
+                        data-chart-empty="Belum ada data siswa untuk ditampilkan."
+                    ></canvas>
+                    <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                        <span class="text-2xl font-semibold tabular-nums text-gray-900" data-count-to="{{ $distTotal }}">{{ number_format($distTotal) }}</span>
+                        <span class="text-xs text-gray-500">total siswa</span>
+                    </div>
+                </div>
+
+                <ul class="grid gap-2 text-sm">
+                    @foreach ($studentDistribution as $slice)
+                        <li class="flex items-center justify-between gap-3 rounded-lg px-2 py-1 transition-colors hover:bg-slate-50">
+                            <span class="flex items-center gap-2">
+                                <span class="h-3 w-3 rounded-full" style="background-color: {{ $slice['color'] }}"></span>
+                                <span class="text-gray-700">{{ $slice['label'] }}</span>
+                            </span>
+                            <span class="font-semibold tabular-nums text-gray-900">{{ number_format($slice['value']) }}</span>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
         </section>
     @else

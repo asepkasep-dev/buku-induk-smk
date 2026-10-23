@@ -24,6 +24,26 @@ new class extends Component
 
         $this->student = $student->load($relations);
     }
+
+    public function with(): array
+    {
+        $fields = [
+            'nisn', 'nickname', 'gender', 'birth_place', 'birth_date', 'religion',
+            'previous_school', 'address', 'village', 'district', 'city', 'province',
+            'phone', 'email',
+        ];
+
+        $filled = collect($fields)->filter(fn ($key) => filled($this->student->{$key}))->count();
+        $total = count($fields);
+
+        return [
+            'completeness' => [
+                'percent' => $total ? (int) round($filled / $total * 100) : 0,
+                'filled' => $filled,
+                'total' => $total,
+            ],
+        ];
+    }
 };
 ?>
 
@@ -54,7 +74,7 @@ new class extends Component
 
         <a
             href="{{ route('report-scores.index', $student) }}"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow"
         >
             Nilai Rapor
         </a>
@@ -65,7 +85,18 @@ new class extends Component
 
     </div>
 
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="card mt-6 animate-reveal p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="text-lg font-semibold">Kelengkapan Data</h2>
+            <span class="text-sm text-gray-500">{{ $completeness['filled'] }} dari {{ $completeness['total'] }} kolom terisi</span>
+        </div>
+        <div class="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+            <div class="h-full rounded-full bg-gradient-to-r from-brand-500 to-indigo-600 transition-all duration-700 ease-out" style="width: {{ $completeness['percent'] }}%"></div>
+        </div>
+        <p class="mt-2 text-sm font-medium text-gray-700">{{ $completeness['percent'] }}% lengkap</p>
+    </div>
+
+    <div class="mt-6 card p-6">
         <h2 class="text-lg font-semibold">Identitas Siswa</h2>
 
         <dl class="mt-4 grid gap-6 md:grid-cols-2">
@@ -116,7 +147,7 @@ new class extends Component
 
             <div>
                 <dt class="text-sm text-gray-500">Status Siswa</dt>
-                <dd class="mt-1 font-medium">{{ $student->status }}</dd>
+                <dd class="mt-1 font-medium"><x-status-badge :status="$student->status" /></dd>
             </div>
 
             <div>
@@ -125,7 +156,7 @@ new class extends Component
             </div>
         </dl>
     </div>
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="mt-6 card p-6">
         <h2 class="text-lg font-semibold">Alamat & Kontak</h2>
 
         <dl class="mt-4 grid gap-6 md:grid-cols-2">
@@ -166,7 +197,7 @@ new class extends Component
         </dl>
     </div>
 
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="mt-6 card p-6">
         <h2 class="text-lg font-semibold">Riwayat Rombel</h2>
 
         <div class="mt-4 overflow-hidden rounded-lg border">
@@ -214,7 +245,7 @@ new class extends Component
     </div>
 
     @if (auth()->user()->hasPermission('MANAGE_GUARDIAN'))
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="mt-6 card p-6">
         <h2 class="text-lg font-semibold">Data Orang Tua / Wali</h2>
 
         <div class="mt-4 overflow-hidden rounded-lg border">
@@ -265,7 +296,7 @@ new class extends Component
     </div>
     @endif
 
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="mt-6 card p-6">
         <h2 class="text-lg font-semibold">Nilai Rapor</h2>
 
         @php
