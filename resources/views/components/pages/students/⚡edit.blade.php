@@ -86,16 +86,16 @@ new class extends Component
 };
 ?>
 
-<div>
+<div class="mx-auto max-w-4xl">
     <h1 class="text-2xl font-semibold">Ubah Data Siswa</h1>
     <p class="mt-1 text-sm text-gray-500">{{ $student->full_name }} · NIS {{ $student->nis }}</p>
 
-    <form wire:submit="save" class="mt-6 space-y-6 rounded-lg border bg-white p-6">
+    <form wire:submit="save" class="card mt-6 space-y-6 p-6 animate-reveal">
         @include('components.pages.students.form-fields')
 
         <div class="flex justify-end gap-3">
-            <a href="{{ route('students.show', $student) }}" class="rounded border px-4 py-2 text-sm">Batal</a>
-            <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            <a href="{{ route('students.show', $student) }}" class="btn-secondary">Batal</a>
+            <button type="submit" class="btn-primary">
                 Simpan perubahan
             </button>
         </div>

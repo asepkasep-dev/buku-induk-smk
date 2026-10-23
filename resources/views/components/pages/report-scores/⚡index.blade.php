@@ -71,7 +71,7 @@ new class extends Component
                         'student' => $student,
                         'semester' => $semesterId,
                     ]) }}"
-                    class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                    class="btn-primary"
                 >
                     Tambah Nilai
                 </a>
@@ -94,7 +94,7 @@ new class extends Component
 
             <select
                 wire:model.live="semesterId"
-                class="mt-1 w-full rounded-lg border px-3 py-2"
+                class="mt-2"
             >
                 @foreach ($semesterOptions as $id => $label)
                     <option value="{{ $id }}">
@@ -105,7 +105,7 @@ new class extends Component
         </div>
     @endif
 
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="card mt-6 p-6">
         @if ($student->reportScores->isEmpty())
             <div class="text-sm text-gray-500">
                 Belum ada nilai rapor untuk siswa ini.

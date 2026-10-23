@@ -269,7 +269,7 @@ new class extends Component
         </div>
     @endif
 
-    <section class="rounded-xl border bg-white p-5 shadow-sm">
+    <section class="card p-5">
         <div class="grid gap-4 sm:grid-cols-3">
             <div><div class="text-sm text-gray-500">Kelas</div><div class="mt-1 font-medium">{{ $classname }}</div></div>
             <div><div class="text-sm text-gray-500">Semester</div><div class="mt-1 font-medium">{{ $semesterLabel }}</div></div>
@@ -277,20 +277,20 @@ new class extends Component
         </div>
     </section>
 
-    <section class="rounded-xl border bg-white p-5 shadow-sm">
+    <section class="card p-5">
         <h2 class="text-lg font-semibold">Bobot & Kriteria Ketuntasan</h2>
         <div class="mt-4 grid gap-4 sm:grid-cols-3">
             <div>
                 <label class="block text-sm font-medium">Bobot Pengetahuan (%)</label>
-                <input type="number" min="0" max="100" @disabled(!$editable) wire:model.live="penBobot" class="mt-1 w-full rounded-lg border px-3 py-2 disabled:bg-gray-100">
+                <input type="number" min="0" max="100" @disabled(!$editable) wire:model.live="penBobot" class="mt-2">
             </div>
             <div>
                 <label class="block text-sm font-medium">Bobot Keterampilan (%)</label>
-                <input type="number" min="0" max="100" @disabled(!$editable) wire:model.live="ketBobot" class="mt-1 w-full rounded-lg border px-3 py-2 disabled:bg-gray-100">
+                <input type="number" min="0" max="100" @disabled(!$editable) wire:model.live="ketBobot" class="mt-2">
             </div>
             <div>
                 <label class="block text-sm font-medium">KKM Mapel</label>
-                <input type="number" min="0" max="100" @disabled(!$editable) wire:model.live="kkm" class="mt-1 w-full rounded-lg border px-3 py-2 disabled:bg-gray-100">
+                <input type="number" min="0" max="100" @disabled(!$editable) wire:model.live="kkm" class="mt-2">
             </div>
         </div>
         @error('penBobot')<div class="mt-1 text-sm text-red-600">{{ $message }}</div>@enderror
@@ -298,7 +298,7 @@ new class extends Component
         @error('kkm')<div class="mt-1 text-sm text-red-600">{{ $message }}</div>@enderror
         <p class="mt-2 text-xs text-gray-500">Total bobot: {{ $penBobot + $ketBobot }}%. Nilai akhir memakai rasio bobot ini. Simpan untuk menghitung ulang.</p>
         @if ($editable)
-            <button type="button" wire:click="saveWeights" class="mt-3 rounded-lg bg-gray-800 px-4 py-2 text-sm font-medium text-white">Simpan Bobot & KKM</button>
+            <button type="button" wire:click="saveWeights" class="btn-primary mt-3">Simpan Bobot & KKM</button>
         @endif
     </section>
 
@@ -307,13 +307,13 @@ new class extends Component
             ['title' => 'Nilai Pengetahuan', 'prop' => 'penItems', 'items' => $penItems, 'label' => 'newPenLabel', 'score' => 'newPenScore', 'add' => 'addPen', 'remove' => 'removePen'],
             ['title' => 'Nilai Keterampilan', 'prop' => 'ketItems', 'items' => $ketItems, 'label' => 'newKetLabel', 'score' => 'newKetScore', 'add' => 'addKet', 'remove' => 'removeKet'],
         ] as $panel)
-            <section class="rounded-xl border bg-white p-5 shadow-sm">
+            <section class="card p-5">
                 <h2 class="text-lg font-semibold">{{ $panel['title'] }}</h2>
                 <div class="mt-4 space-y-2">
                     @foreach ($panel['items'] as $i => $item)
                         <div class="flex items-center gap-2">
-                            <input type="text" @disabled(!$editable) wire:model="{{ $panel['prop'] }}.{{ $i }}.label" class="w-full rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100">
-                            <input type="number" min="0" max="100" @disabled(!$editable) wire:model="{{ $panel['prop'] }}.{{ $i }}.score" class="w-20 rounded-lg border px-3 py-2 text-sm disabled:bg-gray-100">
+                            <input type="text" @disabled(!$editable) wire:model="{{ $panel['prop'] }}.{{ $i }}.label">
+                            <input type="number" min="0" max="100" @disabled(!$editable) wire:model="{{ $panel['prop'] }}.{{ $i }}.score" class="w-20">
                             @if ($editable)
                                 <button type="button" wire:click="{{ $panel['remove'] }}({{ $item['id'] }})" class="text-red-600 hover:underline text-sm">×</button>
                             @endif
@@ -326,13 +326,13 @@ new class extends Component
                     <div class="mt-4 flex items-end gap-2 border-t pt-4">
                         <div class="flex-1">
                             <label class="block text-xs text-gray-500">Label item baru</label>
-                            <input type="text" wire:model="{{ $panel['label'] }}" class="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
+                            <input type="text" wire:model="{{ $panel['label'] }}" class="mt-2">
                         </div>
                         <div class="w-20">
                             <label class="block text-xs text-gray-500">Skor</label>
-                            <input type="number" min="0" max="100" wire:model="{{ $panel['score'] }}" class="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
+                            <input type="number" min="0" max="100" wire:model="{{ $panel['score'] }}" class="mt-2">
                         </div>
-                        <button type="button" wire:click="{{ $panel['add'] }}" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white">+ Tambah</button>
+                        <button type="button" wire:click="{{ $panel['add'] }}" class="btn-primary">+ Tambah</button>
                     </div>
                 @endif
             </section>
@@ -341,11 +341,11 @@ new class extends Component
 
     @if ($editable)
         <div class="flex justify-end">
-            <button type="button" wire:click="saveItems" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white">Simpan Ledger & Hitung Nilai</button>
+            <button type="button" wire:click="saveItems" class="btn-primary">Simpan Ledger & Hitung Nilai</button>
         </div>
     @endif
 
-    <section class="rounded-xl border bg-white p-5 shadow-sm">
+    <section class="card p-5">
         <h2 class="text-lg font-semibold">Hasil Akhir (dihitung otomatis)</h2>
         <p class="mt-1 text-sm text-gray-500">Predikat mengikuti KKM {{ $kkm }} (interval = (100 − KKM) ÷ 3 = {{ number_format($interval, 2) }}).</p>
 

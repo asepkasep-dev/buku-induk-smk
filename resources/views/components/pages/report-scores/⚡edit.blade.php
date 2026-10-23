@@ -181,7 +181,7 @@ new class extends Component
 <div>
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold">TES EDIT NILAI 123</h1>
+            <h1 class="text-2xl font-semibold">Edit Nilai Rapor</h1>
 
             <p class="mt-1 text-sm text-gray-500">
                 {{ $reportScore->student?->full_name ?? '-' }}
@@ -211,7 +211,7 @@ new class extends Component
         </div>
     @endif
 
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="card mt-6 p-6">
         <div class="grid gap-6 md:grid-cols-2">
             <div>
                 <div class="text-sm text-gray-500">Mata Pelajaran</div>
@@ -253,7 +253,7 @@ new class extends Component
                             min="0"
                             max="100"
                             wire:model="finalScore"
-                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                            class="mt-2"
                         >
 
                         @error('finalScore')
@@ -271,7 +271,7 @@ new class extends Component
                         <input
                             type="text"
                             wire:model="letterGrade"
-                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                            class="mt-2"
                         >
 
                         @error('letterGrade')
@@ -289,7 +289,7 @@ new class extends Component
                         <textarea
                             wire:model="description"
                             rows="4"
-                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                            class="mt-2"
                         ></textarea>
 
                         @error('description')
@@ -302,7 +302,7 @@ new class extends Component
                     <div class="flex gap-3">
                         <button
                             type="submit"
-                            class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white"
+                            class="btn-primary"
                         >
                             Simpan
                         </button>
@@ -396,7 +396,7 @@ new class extends Component
                             min="0"
                             max="100"
                             wire:model="correctionFinalScore"
-                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                            class="mt-2"
                         >
 
                         @error('correctionFinalScore')
@@ -414,7 +414,7 @@ new class extends Component
                         <input
                             type="text"
                             wire:model="correctionLetterGrade"
-                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                            class="mt-2"
                         >
 
                         @error('correctionLetterGrade')
@@ -432,7 +432,7 @@ new class extends Component
                         <textarea
                             wire:model="correctionDescription"
                             rows="4"
-                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                            class="mt-2"
                         ></textarea>
 
                         @error('correctionDescription')
@@ -450,7 +450,7 @@ new class extends Component
                         <textarea
                             wire:model="correctionReason"
                             rows="3"
-                            class="mt-1 w-full rounded-lg border px-3 py-2"
+                            class="mt-2"
                             placeholder="Contoh: Kesalahan input nilai saat entri awal."
                         ></textarea>
 
@@ -473,7 +473,7 @@ new class extends Component
         @endif
     </div>
 
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="card mt-6 p-6">
         <div>
             <h2 class="text-lg font-semibold">
                 Riwayat Perubahan Nilai

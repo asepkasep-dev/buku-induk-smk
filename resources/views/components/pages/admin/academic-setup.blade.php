@@ -383,102 +383,102 @@ new class extends Component
     </header>
     @if (session('success'))<div role="status" class="rounded border border-green-200 bg-green-50 px-4 py-3 text-green-800">{{ session('success') }}</div>@endif
 
-    <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Profil sekolah</h2>
+    <section class="card p-5"><h2 class="text-lg font-semibold">Profil sekolah</h2>
         <form wire:submit="saveSchool" class="mt-4 grid gap-3 md:grid-cols-3">
-            <label class="text-sm md:col-span-2">Nama sekolah<input wire:model="schoolName" class="mt-1 w-full rounded border-gray-300">@error('schoolName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">NPSN (8 digit)<input wire:model="schoolNpsn" inputmode="numeric" maxlength="8" class="mt-1 w-full rounded border-gray-300">@error('schoolNpsn')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">NSS<input wire:model="schoolNss" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Email sekolah<input type="email" wire:model="schoolEmail" class="mt-1 w-full rounded border-gray-300">@error('schoolEmail')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Telepon<input wire:model="schoolPhone" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Website<input type="url" wire:model="schoolWebsite" class="mt-1 w-full rounded border-gray-300">@error('schoolWebsite')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm md:col-span-3">Alamat<input wire:model="schoolAddress" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Desa/kelurahan<input wire:model="schoolVillage" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Kecamatan<input wire:model="schoolDistrict" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Kabupaten/kota<input wire:model="schoolCity" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Provinsi<input wire:model="schoolProvince" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Kode pos<input wire:model="schoolPostalCode" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">Nama kepala sekolah<input wire:model="principalName" class="mt-1 w-full rounded border-gray-300"></label>
-            <label class="text-sm">NIP kepala sekolah<input wire:model="principalNip" class="mt-1 w-full rounded border-gray-300"></label>
-            <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white md:col-span-3">Simpan profil</button>
+            <label class="text-sm md:col-span-2">Nama sekolah<input wire:model="schoolName" class="mt-2">@error('schoolName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">NPSN (8 digit)<input wire:model="schoolNpsn" inputmode="numeric" maxlength="8" class="mt-2">@error('schoolNpsn')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">NSS<input wire:model="schoolNss" class="mt-2"></label>
+            <label class="text-sm">Email sekolah<input type="email" wire:model="schoolEmail" class="mt-2">@error('schoolEmail')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Telepon<input wire:model="schoolPhone" class="mt-2"></label>
+            <label class="text-sm">Website<input type="url" wire:model="schoolWebsite" class="mt-2">@error('schoolWebsite')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm md:col-span-3">Alamat<input wire:model="schoolAddress" class="mt-2"></label>
+            <label class="text-sm">Desa/kelurahan<input wire:model="schoolVillage" class="mt-2"></label>
+            <label class="text-sm">Kecamatan<input wire:model="schoolDistrict" class="mt-2"></label>
+            <label class="text-sm">Kabupaten/kota<input wire:model="schoolCity" class="mt-2"></label>
+            <label class="text-sm">Provinsi<input wire:model="schoolProvince" class="mt-2"></label>
+            <label class="text-sm">Kode pos<input wire:model="schoolPostalCode" class="mt-2"></label>
+            <label class="text-sm">Nama kepala sekolah<input wire:model="principalName" class="mt-2"></label>
+            <label class="text-sm">NIP kepala sekolah<input wire:model="principalNip" class="mt-2"></label>
+            <button class="btn-primary md:col-span-3">Simpan profil</button>
         </form>
     </section>
 
-    <section class="rounded-lg border bg-white p-5">
+    <section class="card p-5">
         <h2 class="text-lg font-semibold">Tahun ajaran</h2>
         <form wire:submit="saveYear" class="mt-4 grid gap-4 md:grid-cols-4">
-            <label class="text-sm">Nama<input wire:model="yearName" placeholder="2026/2027" class="mt-1 w-full rounded border-gray-300">@error('yearName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Mulai<input type="date" wire:model="yearStartDate" class="mt-1 w-full rounded border-gray-300">@error('yearStartDate')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Selesai<input type="date" wire:model="yearEndDate" class="mt-1 w-full rounded border-gray-300">@error('yearEndDate')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <button class="self-end rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white">Buat tahun ajaran</button>
+            <label class="text-sm">Nama<input wire:model="yearName" placeholder="2026/2027" class="mt-2">@error('yearName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Mulai<input type="date" wire:model="yearStartDate" class="mt-2">@error('yearStartDate')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Selesai<input type="date" wire:model="yearEndDate" class="mt-2">@error('yearEndDate')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <button class="self-end btn-primary">Buat tahun ajaran</button>
         </form>
         <div class="mt-4 divide-y">@forelse ($years as $year)
-            <div class="flex flex-wrap items-center justify-between gap-3 py-3"><div><strong>{{ $year->name }}</strong> <span class="text-sm text-gray-600">{{ $year->start_date->format('d/m/Y') }} – {{ $year->end_date->format('d/m/Y') }}</span><div class="mt-1 flex gap-2 text-xs">@foreach ($year->semesters as $semester)<span class="rounded bg-gray-100 px-2 py-1">{{ $semester->name }} · {{ $semester->status }}</span>@endforeach</div></div><div class="flex gap-2">@if ($year->status !== 'ACTIVE')<button wire:click="activateYear({{ $year->id }})" class="rounded border px-3 py-1 text-sm">Jadikan aktif</button>@endif @foreach ($year->semesters as $semester) @if ($semester->status !== 'ACTIVE')<button wire:click="activateSemester({{ $semester->id }})" class="rounded border px-3 py-1 text-sm">Aktifkan semester {{ $semester->number }}</button>@endif @endforeach</div></div>
+            <div class="flex flex-wrap items-center justify-between gap-3 py-3"><div><strong>{{ $year->name }}</strong> <span class="text-sm text-gray-600">{{ $year->start_date->format('d/m/Y') }} – {{ $year->end_date->format('d/m/Y') }}</span><div class="mt-1 flex gap-2 text-xs">@foreach ($year->semesters as $semester)<span class="rounded bg-gray-100 px-2 py-1">{{ $semester->name }} · {{ $semester->status }}</span>@endforeach</div></div><div class="flex gap-2">@if ($year->status !== 'ACTIVE')<button wire:click="activateYear({{ $year->id }})" class="btn-secondary">Jadikan aktif</button>@endif @foreach ($year->semesters as $semester) @if ($semester->status !== 'ACTIVE')<button wire:click="activateSemester({{ $semester->id }})" class="btn-secondary">Aktifkan semester {{ $semester->number }}</button>@endif @endforeach</div></div>
         @empty <p class="py-3 text-sm text-gray-500">Belum ada tahun ajaran.</p>@endforelse</div>
     </section>
 
     <div class="grid gap-6 lg:grid-cols-2">
-        <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Konsentrasi keahlian</h2>
+        <section class="card p-5"><h2 class="text-lg font-semibold">Konsentrasi keahlian</h2>
             <form wire:submit="saveCompetency" class="mt-4 grid gap-3 sm:grid-cols-3">
-                <label class="text-sm">Kode<input wire:model="competencyCode" class="mt-1 w-full rounded border-gray-300">@error('competencyCode')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Nama<input wire:model="competencyName" class="mt-1 w-full rounded border-gray-300">@error('competencyName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Nama singkat<input wire:model="competencyShortName" class="mt-1 w-full rounded border-gray-300"></label>
-                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white sm:col-span-3">Tambah konsentrasi</button>
+                <label class="text-sm">Kode<input wire:model="competencyCode" class="mt-2">@error('competencyCode')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Nama<input wire:model="competencyName" class="mt-2">@error('competencyName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Nama singkat<input wire:model="competencyShortName" class="mt-2"></label>
+                <button class="btn-primary sm:col-span-3">Tambah konsentrasi</button>
             </form>
             <ul class="mt-3 list-inside list-disc text-sm">@foreach ($competencies as $item)<li>{{ $item->name }}</li>@endforeach</ul>
         </section>
-        <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Rombel</h2>
+        <section class="card p-5"><h2 class="text-lg font-semibold">Rombel</h2>
             <form wire:submit="saveRombel" class="mt-4 grid gap-3 sm:grid-cols-2">
-                <label class="text-sm">Tahun ajaran<select wire:model="rombelYearId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($years as $year)<option value="{{ $year->id }}">{{ $year->name }}</option>@endforeach</select>@error('rombelYearId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Konsentrasi<select wire:model="rombelCompetencyId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($competencies as $item)<option value="{{ $item->id }}">{{ $item->name }}</option>@endforeach</select>@error('rombelCompetencyId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Tingkat<select wire:model="rombelGrade" class="mt-1 w-full rounded border-gray-300"><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label>
-                <label class="text-sm">Nama<input wire:model="rombelName" placeholder="X RPL 1" class="mt-1 w-full rounded border-gray-300">@error('rombelName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white sm:col-span-2">Tambah rombel</button>
+                <label class="text-sm">Tahun ajaran<select wire:model="rombelYearId" class="mt-2"><option value="">Pilih</option>@foreach ($years as $year)<option value="{{ $year->id }}">{{ $year->name }}</option>@endforeach</select>@error('rombelYearId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Konsentrasi<select wire:model="rombelCompetencyId" class="mt-2"><option value="">Pilih</option>@foreach ($competencies as $item)<option value="{{ $item->id }}">{{ $item->name }}</option>@endforeach</select>@error('rombelCompetencyId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Tingkat<select wire:model="rombelGrade" class="mt-2"><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label>
+                <label class="text-sm">Nama<input wire:model="rombelName" placeholder="X RPL 1" class="mt-2">@error('rombelName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <button class="btn-primary sm:col-span-2">Tambah rombel</button>
             </form>
             <ul class="mt-3 divide-y text-sm">@foreach ($rombels as $rombel)<li class="py-2">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</li>@endforeach</ul>
         </section>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-2">
-        <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Kurikulum dan mata pelajaran</h2>
+        <section class="card p-5"><h2 class="text-lg font-semibold">Kurikulum dan mata pelajaran</h2>
             <form wire:submit="saveCurriculum" class="mt-4 grid gap-3 sm:grid-cols-3">
-                <label class="text-sm sm:col-span-2">Nama kurikulum<input wire:model="curriculumName" class="mt-1 w-full rounded border-gray-300">@error('curriculumName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Versi<input wire:model="curriculumVersion" class="mt-1 w-full rounded border-gray-300"></label>
-                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white sm:col-span-3">Tambah kurikulum</button>
+                <label class="text-sm sm:col-span-2">Nama kurikulum<input wire:model="curriculumName" class="mt-2">@error('curriculumName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Versi<input wire:model="curriculumVersion" class="mt-2"></label>
+                <button class="btn-primary sm:col-span-3">Tambah kurikulum</button>
             </form>
             <form wire:submit="saveSubject" class="mt-5 grid gap-3 sm:grid-cols-3">
-                <label class="text-sm">Kode mapel<input wire:model="subjectCode" class="mt-1 w-full rounded border-gray-300">@error('subjectCode')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Nama mapel<input wire:model="subjectName" class="mt-1 w-full rounded border-gray-300">@error('subjectName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Kategori<select wire:model="subjectCategory" class="mt-1 w-full rounded border-gray-300"><option value="GENERAL">Umum</option><option value="VOCATIONAL">Kejuruan</option></select></label>
-                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white sm:col-span-3">Tambah mata pelajaran</button>
+                <label class="text-sm">Kode mapel<input wire:model="subjectCode" class="mt-2">@error('subjectCode')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Nama mapel<input wire:model="subjectName" class="mt-2">@error('subjectName')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Kategori<select wire:model="subjectCategory" class="mt-2"><option value="GENERAL">Umum</option><option value="VOCATIONAL">Kejuruan</option></select></label>
+                <button class="btn-primary sm:col-span-3">Tambah mata pelajaran</button>
             </form>
         </section>
-        <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Struktur kurikulum</h2>
+        <section class="card p-5"><h2 class="text-lg font-semibold">Struktur kurikulum</h2>
             <form wire:submit="saveMapping" class="mt-4 grid gap-3 sm:grid-cols-2">
-                <label class="text-sm">Kurikulum<select wire:model="mappingCurriculumId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($curricula as $item)<option value="{{ $item->id }}">{{ $item->name }} {{ $item->version }}</option>@endforeach</select>@error('mappingCurriculumId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Mata pelajaran<select wire:model="mappingSubjectId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($subjects as $item)<option value="{{ $item->id }}">{{ $item->code }} · {{ $item->name }}</option>@endforeach</select>@error('mappingSubjectId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Konsentrasi<select wire:model="mappingCompetencyId" class="mt-1 w-full rounded border-gray-300"><option value="">Semua konsentrasi</option>@foreach ($competencies as $item)<option value="{{ $item->id }}">{{ $item->name }}</option>@endforeach</select></label>
-                <label class="text-sm">Tingkat<select wire:model="mappingGrade" class="mt-1 w-full rounded border-gray-300"><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label>
-                <label class="text-sm">Semester<select wire:model="mappingSemester" class="mt-1 w-full rounded border-gray-300"><option value="1">Ganjil</option><option value="2">Genap</option></select></label>
-                <button class="self-end rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white">Masukkan mapel</button>
+                <label class="text-sm">Kurikulum<select wire:model="mappingCurriculumId" class="mt-2"><option value="">Pilih</option>@foreach ($curricula as $item)<option value="{{ $item->id }}">{{ $item->name }} {{ $item->version }}</option>@endforeach</select>@error('mappingCurriculumId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Mata pelajaran<select wire:model="mappingSubjectId" class="mt-2"><option value="">Pilih</option>@foreach ($subjects as $item)<option value="{{ $item->id }}">{{ $item->code }} · {{ $item->name }}</option>@endforeach</select>@error('mappingSubjectId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Konsentrasi<select wire:model="mappingCompetencyId" class="mt-2"><option value="">Semua konsentrasi</option>@foreach ($competencies as $item)<option value="{{ $item->id }}">{{ $item->name }}</option>@endforeach</select></label>
+                <label class="text-sm">Tingkat<select wire:model="mappingGrade" class="mt-2"><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label>
+                <label class="text-sm">Semester<select wire:model="mappingSemester" class="mt-2"><option value="1">Ganjil</option><option value="2">Genap</option></select></label>
+                <button class="self-end btn-primary">Masukkan mapel</button>
             </form>
         </section>
     </div>
 
-    <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Tawarkan mapel ke rombel</h2>
+    <section class="card p-5"><h2 class="text-lg font-semibold">Tawarkan mapel ke rombel</h2>
         <form wire:submit="saveOffering" class="mt-4 grid gap-3 md:grid-cols-4">
-            <label class="text-sm">Mapel kurikulum<select wire:model="offeringMappingId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($mappings as $mapping)<option value="{{ $mapping->id }}">{{ $mapping->subject->name }} · Kelas {{ $mapping->grade }} · Semester {{ $mapping->semester_number }}</option>@endforeach</select>@error('offeringMappingId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Rombel<select wire:model="offeringRombelId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('offeringRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Semester<select wire:model="offeringSemesterId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($semesters as $semester)<option value="{{ $semester->id }}">{{ $semester->academicYear->name }} · {{ $semester->name }}</option>@endforeach</select>@error('offeringSemesterId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <button class="self-end rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white">Buat penawaran</button>
+            <label class="text-sm">Mapel kurikulum<select wire:model="offeringMappingId" class="mt-2"><option value="">Pilih</option>@foreach ($mappings as $mapping)<option value="{{ $mapping->id }}">{{ $mapping->subject->name }} · Kelas {{ $mapping->grade }} · Semester {{ $mapping->semester_number }}</option>@endforeach</select>@error('offeringMappingId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Rombel<select wire:model="offeringRombelId" class="mt-2"><option value="">Pilih</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('offeringRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Semester<select wire:model="offeringSemesterId" class="mt-2"><option value="">Pilih</option>@foreach ($semesters as $semester)<option value="{{ $semester->id }}">{{ $semester->academicYear->name }} · {{ $semester->name }}</option>@endforeach</select>@error('offeringSemesterId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <button class="self-end btn-primary">Buat penawaran</button>
         </form>
     </section>
 
-    <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Tempatkan siswa ke rombel</h2>
+    <section class="card p-5"><h2 class="text-lg font-semibold">Tempatkan siswa ke rombel</h2>
         <form wire:submit="saveEnrollment" class="mt-4 grid gap-3 md:grid-cols-4">
-            <label class="text-sm">Siswa<select wire:model="enrollmentStudentId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($students as $student)<option value="{{ $student->id }}">{{ $student->nis }} · {{ $student->full_name }}</option>@endforeach</select>@error('enrollmentStudentId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Tahun ajaran<select wire:model="enrollmentYearId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($years as $year)<option value="{{ $year->id }}">{{ $year->name }}</option>@endforeach</select>@error('enrollmentYearId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Rombel<select wire:model="enrollmentRombelId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('enrollmentRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <button class="self-end rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white">Tempatkan siswa</button>
+            <label class="text-sm">Siswa<select wire:model="enrollmentStudentId" class="mt-2"><option value="">Pilih</option>@foreach ($students as $student)<option value="{{ $student->id }}">{{ $student->nis }} · {{ $student->full_name }}</option>@endforeach</select>@error('enrollmentStudentId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Tahun ajaran<select wire:model="enrollmentYearId" class="mt-2"><option value="">Pilih</option>@foreach ($years as $year)<option value="{{ $year->id }}">{{ $year->name }}</option>@endforeach</select>@error('enrollmentYearId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Rombel<select wire:model="enrollmentRombelId" class="mt-2"><option value="">Pilih</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('enrollmentRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <button class="self-end btn-primary">Tempatkan siswa</button>
         </form>
     </section>
 </div>

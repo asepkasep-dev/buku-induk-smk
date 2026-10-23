@@ -235,7 +235,7 @@ new class extends Component
         </a>
     </div>
 
-    <div class="mt-6 rounded-lg border bg-white p-6">
+    <div class="card mt-6 p-6">
         @if (empty($offeringOptions))
             <div class="rounded-lg border border-green-200 bg-green-50 p-4">
                 <h2 class="font-medium text-green-800">
@@ -262,7 +262,7 @@ new class extends Component
 
                 <select
                     wire:model="subjectOfferingId"
-                    class="mt-1 w-full rounded-lg border px-3 py-2"
+                    class="mt-2"
                 >
                     <option value="">
                         @if (empty($offeringOptions))
@@ -300,7 +300,7 @@ new class extends Component
                     min="0"
                     max="100"
                     wire:model="finalScore"
-                    class="mt-1 w-full rounded-lg border px-3 py-2"
+                    class="mt-2"
                 >
 
                 @error('finalScore')
@@ -318,7 +318,7 @@ new class extends Component
                 <input
                     type="text"
                     wire:model="letterGrade"
-                    class="mt-1 w-full rounded-lg border px-3 py-2"
+                    class="mt-2"
                     placeholder="Contoh: A"
                 >
 
@@ -337,7 +337,7 @@ new class extends Component
                 <textarea
                     wire:model="description"
                     rows="4"
-                    class="mt-1 w-full rounded-lg border px-3 py-2"
+                    class="mt-2"
                 ></textarea>
 
                 @error('description')
@@ -350,7 +350,7 @@ new class extends Component
             <button
                 type="submit"
                 @disabled(empty($offeringOptions))
-                class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+                class="btn-primary"
             >
                 Simpan Nilai
             </button>

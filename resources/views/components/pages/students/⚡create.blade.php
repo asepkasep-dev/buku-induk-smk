@@ -84,26 +84,26 @@ new class extends Component
 };
 ?>
 
-<div>
+<div class="mx-auto max-w-4xl">
     <h1 class="text-2xl font-semibold">Tambah Siswa</h1>
 
-    <form wire:submit="save" class="mt-6 space-y-6 rounded-lg border bg-white p-6">
+    <form wire:submit="save" class="card mt-6 space-y-6 p-6 animate-reveal">
         @include('components.pages.students.form-fields')
 
         <div>
-            <label for="rombelId" class="block text-sm font-medium">Rombel{{ auth()->user()->role?->code === 'OPERATOR' ? ' *' : ' (opsional)' }}</label>
-            <select id="rombelId" wire:model="rombelId" class="mt-1 w-full rounded border-gray-300">
+            <label for="rombelId" class="field-label">Rombel{{ auth()->user()->role?->code === 'OPERATOR' ? ' *' : ' (opsional)' }}</label>
+            <select id="rombelId" wire:model="rombelId">
                 <option value="">{{ auth()->user()->role?->code === 'OPERATOR' ? 'Pilih rombel tugas' : 'Nanti ditempatkan oleh admin' }}</option>
                 @foreach ($availableRombels as $rombel)
                     <option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>
                 @endforeach
             </select>
-            @error('rombelId') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+            @error('rombelId') <p class="field-error">{{ $message }}</p> @enderror
         </div>
 
         <div class="flex justify-end gap-3">
-            <a href="{{ route('students.index') }}" class="rounded border px-4 py-2 text-sm">Batal</a>
-            <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            <a href="{{ route('students.index') }}" class="btn-secondary">Batal</a>
+            <button type="submit" class="btn-primary">
                 Simpan siswa
             </button>
         </div>

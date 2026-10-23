@@ -220,39 +220,39 @@ new class extends Component
     <header><h1 class="text-2xl font-semibold">Pengelolaan Akun</h1><p class="mt-1 text-sm text-gray-600">Buat akun staf dan atur akses berdasarkan rombel tugasnya.</p></header>
     @if (session('success'))<div role="status" class="rounded border border-green-200 bg-green-50 px-4 py-3 text-green-800">{{ session('success') }}</div>@endif
 
-    <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Buat akun</h2>
+    <section class="card p-5"><h2 class="text-lg font-semibold">Buat akun</h2>
         <form wire:submit="saveUser" class="mt-4 grid gap-4 md:grid-cols-3">
-            <label class="text-sm">Nama<input wire:model="name" class="mt-1 w-full rounded border-gray-300">@error('name')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Email<input type="email" wire:model="email" class="mt-1 w-full rounded border-gray-300">@error('email')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Peran<select wire:model.live="roleCode" class="mt-1 w-full rounded border-gray-300">@foreach ($roles as $role)<option value="{{ $role->code }}">{{ $role->name }}</option>@endforeach</select>@error('roleCode')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            @if ($roleCode === 'STUDENT')<label class="text-sm">Data siswa<select wire:model="studentId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih siswa</option>@foreach ($students as $student)<option value="{{ $student->id }}">{{ $student->nis }} · {{ $student->full_name }}</option>@endforeach</select>@error('studentId')<span class="text-red-600">{{ $message }}</span>@enderror</label>@endif
-            <label class="text-sm">Kata sandi awal<input type="password" wire:model="password" autocomplete="new-password" class="mt-1 w-full rounded border-gray-300">@error('password')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-            <label class="text-sm">Ulangi kata sandi<input type="password" wire:model="passwordConfirmation" autocomplete="new-password" class="mt-1 w-full rounded border-gray-300"></label>
-            <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white md:col-span-3">Buat akun</button>
+            <label class="text-sm">Nama<input wire:model="name" class="mt-2">@error('name')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Email<input type="email" wire:model="email" class="mt-2">@error('email')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Peran<select wire:model.live="roleCode" class="mt-2">@foreach ($roles as $role)<option value="{{ $role->code }}">{{ $role->name }}</option>@endforeach</select>@error('roleCode')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            @if ($roleCode === 'STUDENT')<label class="text-sm">Data siswa<select wire:model="studentId" class="mt-2"><option value="">Pilih siswa</option>@foreach ($students as $student)<option value="{{ $student->id }}">{{ $student->nis }} · {{ $student->full_name }}</option>@endforeach</select>@error('studentId')<span class="text-red-600">{{ $message }}</span>@enderror</label>@endif
+            <label class="text-sm">Kata sandi awal<input type="password" wire:model="password" autocomplete="new-password" class="mt-2">@error('password')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+            <label class="text-sm">Ulangi kata sandi<input type="password" wire:model="passwordConfirmation" autocomplete="new-password" class="mt-2"></label>
+            <button class="btn-primary md:col-span-3">Buat akun</button>
         </form>
     </section>
 
     <div class="grid gap-6 lg:grid-cols-2">
-        <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Akses operator</h2>
+        <section class="card p-5"><h2 class="text-lg font-semibold">Akses operator</h2>
             <form wire:submit="assignOperatorRombel" class="mt-4 grid gap-3">
-                <label class="text-sm">Operator<select wire:model="operatorUserId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih operator</option>@foreach ($operators as $user)<option value="{{ $user->id }}">{{ $user->name }}</option>@endforeach</select>@error('operatorUserId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Rombel<select wire:model="operatorRombelId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih rombel</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('operatorRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white">Simpan akses</button>
+                <label class="text-sm">Operator<select wire:model="operatorUserId" class="mt-2"><option value="">Pilih operator</option>@foreach ($operators as $user)<option value="{{ $user->id }}">{{ $user->name }}</option>@endforeach</select>@error('operatorUserId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Rombel<select wire:model="operatorRombelId" class="mt-2"><option value="">Pilih rombel</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('operatorRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <button class="btn-primary">Simpan akses</button>
             </form>
             <ul class="mt-4 divide-y text-sm">@foreach ($operatorScopes as $scope)<li class="flex items-center justify-between gap-2 py-2"><span>{{ $scope->user->name }} · {{ $scope->rombel->name }} <span class="text-gray-500">{{ $scope->is_active ? 'Aktif' : 'Nonaktif' }}</span></span><button wire:click="toggleOperatorScope({{ $scope->id }})" class="text-blue-700 underline">{{ $scope->is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button></li>@endforeach</ul>
         </section>
-        <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Penugasan wali kelas</h2>
+        <section class="card p-5"><h2 class="text-lg font-semibold">Penugasan wali kelas</h2>
             <form wire:submit="assignHomeroom" class="mt-4 grid gap-3">
-                <label class="text-sm">Wali kelas<select wire:model="homeroomUserId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih wali kelas</option>@foreach ($homeroomUsers as $user)<option value="{{ $user->id }}">{{ $user->name }}</option>@endforeach</select>@error('homeroomUserId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Tahun ajaran<select wire:model="homeroomYearId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih tahun ajaran</option>@foreach ($years as $year)<option value="{{ $year->id }}">{{ $year->name }}</option>@endforeach</select>@error('homeroomYearId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm">Rombel<select wire:model="homeroomRombelId" class="mt-1 w-full rounded border-gray-300"><option value="">Pilih rombel</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('homeroomRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
-                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white">Tugaskan wali kelas</button>
+                <label class="text-sm">Wali kelas<select wire:model="homeroomUserId" class="mt-2"><option value="">Pilih wali kelas</option>@foreach ($homeroomUsers as $user)<option value="{{ $user->id }}">{{ $user->name }}</option>@endforeach</select>@error('homeroomUserId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Tahun ajaran<select wire:model="homeroomYearId" class="mt-2"><option value="">Pilih tahun ajaran</option>@foreach ($years as $year)<option value="{{ $year->id }}">{{ $year->name }}</option>@endforeach</select>@error('homeroomYearId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <label class="text-sm">Rombel<select wire:model="homeroomRombelId" class="mt-2"><option value="">Pilih rombel</option>@foreach ($rombels as $rombel)<option value="{{ $rombel->id }}">{{ $rombel->name }} · {{ $rombel->academicYear->name }}</option>@endforeach</select>@error('homeroomRombelId')<span class="text-red-600">{{ $message }}</span>@enderror</label>
+                <button class="btn-primary">Tugaskan wali kelas</button>
             </form>
             <ul class="mt-4 divide-y text-sm">@foreach ($classAssignments as $assignment)<li class="flex items-center justify-between gap-2 py-2"><span>{{ $assignment->user->name }} · {{ $assignment->rombel->name }} · {{ $assignment->academicYear->name }} <span class="text-gray-500">{{ $assignment->status === 'ACTIVE' ? 'Aktif' : 'Nonaktif' }}</span></span>@if ($assignment->status === 'ACTIVE')<button wire:click="endHomeroom({{ $assignment->id }})" class="text-blue-700 underline">Akhiri</button>@endif</li>@endforeach</ul>
         </section>
     </div>
 
-    <section class="rounded-lg border bg-white p-5"><h2 class="text-lg font-semibold">Daftar akun</h2>
+    <section class="card p-5"><h2 class="text-lg font-semibold">Daftar akun</h2>
         <div class="mt-4 overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr class="border-b"><th class="py-2 pr-4">Nama</th><th class="py-2 pr-4">Email</th><th class="py-2 pr-4">Peran</th><th class="py-2">Terkait siswa</th></tr></thead><tbody>@foreach ($users as $user)<tr class="border-b"><td class="py-2 pr-4">{{ $user->name }}</td><td class="py-2 pr-4">{{ $user->email }}</td><td class="py-2 pr-4">{{ $user->role?->name ?? 'Belum ada peran' }}</td><td class="py-2">{{ $user->student?->full_name ?? '—' }}</td></tr>@endforeach</tbody></table></div>
     </section>
 </div>
