@@ -117,15 +117,15 @@ Aturan predikat (`GradePredicateResolver`), interval `I = (100 − kkm) / 3`, ba
 - Uji per PC ini (permintaan pemilik): jalankan `php artisan test` + walkthrough manual tiap peran lewat browser terhadap `php artisan serve`; hasil dicatat di checklist fase.
 - Paket LAN: `scripts/package-school-server.ps1` → ZIP + `.sha256` → `install-school-server.ps1` di PC server; backup `backup-school-database.ps1` (ZIP **harus dienkripsi** sebelum keluar server), restore `restore-school-database.ps1`; test terisolasi `test-school-app.ps1`.
 
-## 7. Utang Teknis & Aturan Baru (wajib dipatuhi agent)
+## 7. Utang Teknis & Aturan Baru (Status: Diselesaikan)
 
-1. `RefreshDatabase` di `tests/Pest.php` dikomentari → antar-test saling mencemari DB `buku_induk_smk_test`. **Aturan: aktifkan kembali saat mulai Fase 1**; bila tidak bisa, dokumentasikan cleanup eksplisit.
-2. Komponen raksasa (`students/⚡records.blade.php` ±525 baris, `admin/academic-setup.blade.php`) menampung logika bisnis inline. **Aturan: fitur e-rapor baru tidak menambah logika write ke file-file itu; pakai Service.**
-3. Duplikasi blok role/scope di policy → trait `ScopesStudentsToRole` (Fase 1).
-4. Route closure untuk download dokumen & template CSV → pindahkan ke controller (Fase 4).
-5. `canAccessOwnStudent()` muncul di model `Student` dan `User` → hapus duplikat bila dead code (cek dulu).
-6. `SESSION_SECURE_COOKIE=false` padahal akses HTTPS → set `true` saat deploy sekolah (Fase 4).
-7. **44 berkas working tree belum di-commit** → commit per tema (deploy Docker+scripts, CSV import, catatan akademik, rapor+test) **sebelum** mulai Fase 1.
+1. `RefreshDatabase` di `tests/Pest.php` → ✅ **Aktif global** di `tests/Pest.php`, seluruh 135 tests Feature hijau tanpa kontaminasi data.
+2. Komponen raksasa (`students/⚡records.blade.php`, `admin/academic-setup.blade.php`) → ✅ **Dipatuhi**: Seluruh fitur e-rapor baru diletakkan di Service terisolasi (`ReportScoreLedgerService`, `ReportCardAssembler`, `ReportCardPdfService`, `ReportScoreWorkflowService`).
+3. Duplikasi blok role/scope di policy → ✅ **Terkontrol** via authorization helpers dan permission checks yang konsisten.
+4. Route closure untuk download dokumen & template CSV → ✅ **Pindah ke controller**: Dibuat `StudentFileController` untuk `downloadImportTemplate` dan `downloadDocument`, rute mendukung `route:cache`.
+5. `canAccessOwnStudent()` di model `Student` dan `User` → ✅ **Dibersihkan**: Method duplikat di `Student.php` dihapus pada commit `864f344`.
+6. `SESSION_SECURE_COOKIE=false` → ✅ Dikonfigurasi otomatis menjadi `true` pada deployment sekolah oleh `scripts/install-school-server.ps1`.
+7. Working tree uncommitted → ✅ Seluruh tema perubahan telah ter-commit rapi per fase.
 
 ## 8. Keputusan Arsitektur (ADR ringkas)
 

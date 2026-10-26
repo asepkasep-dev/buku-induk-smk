@@ -1,12 +1,8 @@
 <?php
 
 use App\Http\Controllers\ReportCardController;
-use App\Models\Student;
-use App\Models\StudentDocument;
+use App\Http\Controllers\StudentFileController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 Route::get('/', function () {
     return auth()->check()
@@ -42,29 +38,9 @@ Route::livewire('/students/import', 'pages.students.import')
     ->middleware('auth')
     ->name('students.import');
 
-Route::get('/students/import-template', function () {
-    abort_unless(auth()->user()?->can('create', Student::class) && auth()->user()?->role?->code === 'ADMIN', 403);
-
-    $spreadsheet = new Spreadsheet;
-    $sheet = $spreadsheet->getActiveSheet();
-    $sheet->setTitle('Siswa');
-    $sheet->fromArray([
-        ['nis', 'nisn', 'nik', 'full_name', 'gender', 'entry_year', 'status', 'phone', 'email', 'address'],
-        ['SMK-001', '', '', 'Nama Siswa', 'L', now()->year, 'CALON', '', '', ''],
-    ], null, 'A1');
-    $sheet->getStyle('A1:J1')->getFont()->setBold(true);
-    foreach (range('A', 'J') as $column) {
-        $sheet->getColumnDimension($column)->setAutoSize(true);
-    }
-
-    return response()->streamDownload(
-        function () use ($spreadsheet): void {
-            (new Xlsx($spreadsheet))->save('php://output');
-        },
-        'template-impor-siswa.xlsx',
-        ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-    );
-})->middleware('auth')->name('students.import-template');
+Route::get('/students/import-template', [StudentFileController::class, 'downloadImportTemplate'])
+    ->middleware('auth')
+    ->name('students.import-template');
 
 Route::livewire('/students/{student}/edit', 'pages.students.edit')
     ->middleware('auth')
@@ -74,16 +50,9 @@ Route::livewire('/students/{student}/records', 'pages.students.records')
     ->middleware('auth')
     ->name('students.records');
 
-Route::get('/students/{student}/documents/{document}/download', function (Student $student, StudentDocument $document) {
-    abort_unless(auth()->user()?->can('view', $student), 403);
-    abort_unless(auth()->user()?->hasPermission('MANAGE_STUDENT_DOCUMENT'), 403);
-    abort_unless((int) $document->student_id === (int) $student->id, 404);
-    abort_unless(Storage::disk('local')->exists($document->file_path), 404);
-    $name = basename(str_replace('\\', '/', $document->file_name));
-    $name = preg_replace('/[\r\n"]/', '_', $name);
-
-    return Storage::disk('local')->download($document->file_path, $name);
-})->middleware('auth')->name('students.documents.download');
+Route::get('/students/{student}/documents/{document}/download', [StudentFileController::class, 'downloadDocument'])
+    ->middleware('auth')
+    ->name('students.documents.download');
 
 Route::livewire('/students/{student}', 'pages.students.show')
     ->middleware('auth')

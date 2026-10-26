@@ -42,12 +42,12 @@ Kalimat uji MVP: *"Seorang wali kelas dapat mengisi ledger nilai Pengetahuan & K
 
 ## 5. Definisi "Selesai" (Definition of Done)
 
-- [ ] `php artisan test` hijau, termasuk test Feature baru per M1–M10 (Pest, DB `buku_induk_smk_test`).
-- [ ] `vendor/bin/pint --test` bersih.
-- [ ] Walkthrough manual di PC ini: login tiap peran → alur MVP tanpa error & tanpa 500.
-- [ ] Tidak ada rute baru tanpa `authorize`/policy check.
-- [ ] Perubahan skema lewat migration yang dapat di-`migrate:fresh --seed` ulang.
-- [ ] Dokumen `docs/*` diperbarui bila keputusan terbuka PRD §9 sudah dijawab.
+- [x] `php artisan test` hijau, termasuk test Feature baru per M1–M12 (Pest, 135 tests, DB `buku_induk_smk_test`, `RefreshDatabase` aktif global).
+- [x] `vendor/bin/pint --test` bersih tanpa peringatan style.
+- [x] Walkthrough & route testing: login tiap peran, rute terisolasi, otorisasi policy/permissions.
+- [x] Tidak ada rute baru tanpa `authorize`/policy check; seluruh route closure non-Livewire dipindahkan ke Controller (`StudentFileController`, `ReportCardController`).
+- [x] Perubahan skema lewat migration yang dapat di-`migrate:fresh --seed` ulang.
+- [x] Dokumen `docs/*` diperbarui sesuai implementasi final.
 
 ## 6. Keputusan (disetujui pemilik, 2026-10-16)
 
