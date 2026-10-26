@@ -63,6 +63,30 @@ new class extends Component
         abort(403, 'Akses rekap kelas ditolak.');
     }
 
+    public function bulkLock(): void
+    {
+        try {
+            $count = app(\App\Services\ReportScoreWorkflowService::class)
+                ->lockRombel(auth()->user(), $this->rombel, $this->semester);
+
+            session()->flash('success', "Berhasil mengunci {$count} nilai rapor di kelas {$this->rombel->name}.");
+        } catch (\Throwable $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+
+    public function bulkFinalize(): void
+    {
+        try {
+            $count = app(\App\Services\ReportScoreWorkflowService::class)
+                ->finalizeRombel(auth()->user(), $this->rombel, $this->semester);
+
+            session()->flash('success', "Berhasil memfinalisasi {$count} nilai rapor di kelas {$this->rombel->name}.");
+        } catch (\Throwable $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+
     public function with(): array
     {
         $enrollments = Enrollment::query()
@@ -128,6 +152,20 @@ new class extends Component
             ])
             ->all();
 
+        $allScores = $scores->flatten();
+        $draftCount = $allScores->where('status', 'DRAFT')->count();
+        $lockedCount = $allScores->where('status', 'LOCKED')->count();
+        $finalizedCount = $allScores->where('status', 'FINALIZED')->count();
+
+        $user = auth()->user();
+        $canLock = $draftCount > 0 && $user->hasPermission('LOCK_REPORT_SCORE') && (
+            $user->role?->code === 'ADMIN'
+            || ($user->role?->code === 'WALI_KELAS' && $user->classAssignments()->where('rombel_id', $this->rombel->id)->where('status', 'ACTIVE')->exists())
+            || ($user->role?->code === 'OPERATOR' && $user->operatorRombelScopes()->where('rombel_id', $this->rombel->id)->where('is_active', true)->exists())
+        );
+
+        $canFinalize = $lockedCount > 0 && $user->role?->code === 'ADMIN' && $user->hasPermission('FINALIZE_REPORT_SCORE');
+
         return [
             'studentRows' => $studentRows,
             'totalStudents' => $totalStudents,
@@ -135,6 +173,11 @@ new class extends Component
             'classAverage' => $classAverage,
             'totalOfferings' => $totalOfferings,
             'semesterOptions' => $semesterOptions,
+            'draftCount' => $draftCount,
+            'lockedCount' => $lockedCount,
+            'finalizedCount' => $finalizedCount,
+            'canLock' => $canLock,
+            'canFinalize' => $canFinalize,
         ];
     }
 };
@@ -156,12 +199,48 @@ new class extends Component
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
+            @if ($canLock)
+                <button
+                    type="button"
+                    wire:click="bulkLock"
+                    wire:confirm="Yakin ingin mengunci seluruh nilai DRAFT di kelas ini? Nilai yang dikunci siap untuk difinalisasi oleh Admin."
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-700 focus:outline-none"
+                >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Kunci Nilai Kelas ({{ $draftCount }})
+                </button>
+            @endif
+
+            @if ($canFinalize)
+                <button
+                    type="button"
+                    wire:click="bulkFinalize"
+                    wire:confirm="Yakin ingin memfinalisasi seluruh nilai terkunci di kelas ini? Nilai yang difinalisasi hanya dapat dikoreksi oleh Admin dengan alasan resmi."
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none"
+                >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Finalisasi Nilai ({{ $lockedCount }})
+                </button>
+            @endif
+
             <a href="{{ route('report-cards.batch-pdf', ['rombel' => $rombel->id, 'semester' => $semester->id]) }}" class="btn-primary">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Ekspor Semua Rapor (ZIP PDF)
             </a>
         </div>
     </div>
+
+    @if (session('success'))
+        <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <!-- Statistik Singkat -->
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

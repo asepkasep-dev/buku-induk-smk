@@ -132,3 +132,8 @@ Route::livewire('/class/{rombel}/report-cards/{semester}', 'pages.report-cards.c
 Route::get('/class/{rombel}/report-cards/{semester}/batch-pdf', [ReportCardController::class, 'batchPdf'])
     ->middleware('auth')
     ->name('report-cards.batch-pdf');
+
+// --- Kontrol Mutu & Finalisasi Massal (Fase 3) ---
+Route::livewire('/admin/report-cards/overview', 'pages.admin.report-cards-overview')
+    ->middleware('auth')
+    ->name('admin.report-cards.overview');

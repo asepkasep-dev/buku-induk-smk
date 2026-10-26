@@ -38,6 +38,12 @@
                                     </a>
                                 @endif
 
+                                @if (in_array(auth()->user()->role?->code, ['ADMIN', 'KEPALA_SEKOLAH'], true))
+                                    <a href="{{ route('admin.report-cards.overview') }}" class="{{ $navClass(request()->routeIs('admin.report-cards.overview')) }}">
+                                        Kontrol Mutu Rapor
+                                    </a>
+                                @endif
+
                                 @if (auth()->user()->role?->code === 'ADMIN')
                                     <a href="{{ route('admin.academic-setup') }}" class="{{ $navClass(request()->routeIs('admin.academic-setup')) }}">
                                         Pengaturan Akademik
