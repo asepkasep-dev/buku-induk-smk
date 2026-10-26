@@ -242,6 +242,17 @@ new class extends Component
 
         @if ($reportScore->status === 'DRAFT')
             @can('update', $reportScore)
+                <div class="mt-6 rounded-lg border border-purple-200 bg-purple-50 p-4 text-sm text-purple-900">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <strong>Alur Penilaian E-Rapor:</strong> Untuk menghitung nilai akhir, predikat, dan deskripsi otomatis per mata pelajaran, gunakan <strong>Ledger Nilai</strong>.
+                        </div>
+                        <a href="{{ route('report-scores.ledger', $reportScore) }}" class="inline-flex items-center rounded-md bg-purple-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-purple-700">
+                            Input via Ledger Nilai &rarr;
+                        </a>
+                    </div>
+                </div>
+
                 <form wire:submit="save" class="mt-6 space-y-4">
                     <div>
                         <label class="block text-sm font-medium">

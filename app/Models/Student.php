@@ -97,12 +97,6 @@ class Student extends Model
         return $this->hasMany(StudentGuardian::class);
     }
 
-    public function canAccessOwnStudent(Student $student): bool
-    {
-        return $this->student_id !== null
-            && $this->student_id === $student->id;
-    }
-
     public function reportScores(): HasMany
     {
         return $this->hasMany(ReportScore::class);
