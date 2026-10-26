@@ -19,6 +19,7 @@ class School extends Model
         'phone',
         'email',
         'website',
+        'logo_path',
         'principal_name',
         'principal_nip',
     ];

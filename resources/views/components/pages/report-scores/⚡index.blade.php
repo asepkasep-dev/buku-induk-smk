@@ -65,6 +65,15 @@ new class extends Component
         </div>
 
         <div class="flex items-center gap-3">
+            @if ($semesterId)
+                <a
+                    href="{{ route('report-cards.show', ['student' => $student->id, 'semester' => $semesterId]) }}"
+                    class="btn-secondary"
+                >
+                    Lihat Rapor Siswa
+                </a>
+            @endif
+
             @can('create', App\Models\ReportScore::class)
                 <a
                     href="{{ route('report-scores.create', [

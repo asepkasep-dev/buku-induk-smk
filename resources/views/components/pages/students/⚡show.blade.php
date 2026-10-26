@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Semester;
 use App\Models\Student;
 use Livewire\Component;
 
@@ -36,12 +37,17 @@ new class extends Component
         $filled = collect($fields)->filter(fn ($key) => filled($this->student->{$key}))->count();
         $total = count($fields);
 
+        $latestSemesterId = $this->student->reportScores->first()?->subjectOffering?->semester_id
+            ?? Semester::query()->where('status', 'ACTIVE')->value('id')
+            ?? Semester::query()->latest('id')->value('id');
+
         return [
             'completeness' => [
                 'percent' => $total ? (int) round($filled / $total * 100) : 0,
                 'filled' => $filled,
                 'total' => $total,
             ],
+            'latestSemesterId' => $latestSemesterId,
         ];
     }
 };
@@ -74,10 +80,19 @@ new class extends Component
 
         <a
             href="{{ route('report-scores.index', $student) }}"
-            class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow"
+            class="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
         >
             Nilai Rapor
         </a>
+
+        @if ($latestSemesterId)
+            <a
+                href="{{ route('report-cards.show', ['student' => $student, 'semester' => $latestSemesterId]) }}"
+                class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow"
+            >
+                Rapor Siswa
+            </a>
+        @endif
 
         <a href="{{ route('students.records', $student) }}" class="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50">
             Catatan Akademik

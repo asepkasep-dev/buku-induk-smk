@@ -14,9 +14,14 @@ use App\Models\SubjectOffering;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 new class extends Component
 {
+    use WithFileUploads;
+
+    public $schoolLogo = null;
+    public ?string $schoolLogoPath = null;
     public string $yearName = '';
     public string $yearStartDate = '';
     public string $yearEndDate = '';
@@ -77,6 +82,7 @@ new class extends Component
         $this->schoolWebsite = $school?->website;
         $this->principalName = $school?->principal_name;
         $this->principalNip = $school?->principal_nip;
+        $this->schoolLogoPath = $school?->logo_path;
         $this->yearStartDate = now()->startOfYear()->toDateString();
         $this->yearEndDate = now()->addYear()->startOfYear()->subDay()->toDateString();
         $latestYear = AcademicYear::query()->latest('id')->value('id');
@@ -125,6 +131,17 @@ new class extends Component
             'principal_name' => $data['principalName'],
             'principal_nip' => $data['principalNip'],
         ]);
+
+        if ($this->schoolLogo) {
+            $this->validate([
+                'schoolLogo' => ['image', 'max:2048'],
+            ]);
+            $path = $this->schoolLogo->store('schools', 'public');
+            $school->logo_path = $path;
+            $this->schoolLogoPath = $path;
+            $this->schoolLogo = null;
+        }
+
         $school->save();
         session()->flash('success', 'Profil sekolah berhasil disimpan.');
     }
@@ -399,6 +416,22 @@ new class extends Component
             <label class="text-sm">Kode pos<input wire:model="schoolPostalCode" class="mt-2"></label>
             <label class="text-sm">Nama kepala sekolah<input wire:model="principalName" class="mt-2"></label>
             <label class="text-sm">NIP kepala sekolah<input wire:model="principalNip" class="mt-2"></label>
+
+            <div class="md:col-span-3 flex flex-wrap items-center gap-4 py-2 border-y my-1">
+                @if ($schoolLogo)
+                    <img src="{{ $schoolLogo->temporaryUrl() }}" class="h-16 w-16 object-contain rounded border p-1 bg-white">
+                @elseif ($schoolLogoPath)
+                    <img src="{{ asset('storage/'.$schoolLogoPath) }}" class="h-16 w-16 object-contain rounded border p-1 bg-white">
+                @else
+                    <div class="h-16 w-16 rounded border border-dashed border-gray-300 flex items-center justify-center text-[10px] text-gray-400">Belum Ada Logo</div>
+                @endif
+                <label class="text-sm flex-1">
+                    Logo Sekolah (PNG/JPG, maks 2MB)
+                    <input type="file" wire:model="schoolLogo" accept="image/*" class="mt-2">
+                    @error('schoolLogo')<span class="text-red-600 block mt-1">{{ $message }}</span>@enderror
+                </label>
+            </div>
+
             <button class="btn-primary md:col-span-3">Simpan profil</button>
         </form>
     </section>

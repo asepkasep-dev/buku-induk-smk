@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReportCardController;
 use App\Models\Student;
 use App\Models\StudentDocument;
 use Illuminate\Support\Facades\Route;
@@ -110,3 +111,24 @@ Route::livewire('/report-scores/{reportScore}/edit', 'pages.report-scores.edit')
 Route::livewire('/report-scores/{reportScore}/ledger', 'pages.report-scores.ledger')
     ->middleware('auth')
     ->name('report-scores.ledger');
+
+// --- Rapor & Cetak (Fase 2) ---
+Route::livewire('/students/{student}/report-cards/{semester}', 'pages.report-cards.show')
+    ->middleware('auth')
+    ->name('report-cards.show');
+
+Route::get('/students/{student}/report-cards/{semester}/print', [ReportCardController::class, 'print'])
+    ->middleware('auth')
+    ->name('report-cards.print');
+
+Route::get('/students/{student}/report-cards/{semester}/pdf', [ReportCardController::class, 'pdf'])
+    ->middleware('auth')
+    ->name('report-cards.pdf');
+
+Route::livewire('/class/{rombel}/report-cards/{semester}', 'pages.report-cards.class-summary')
+    ->middleware('auth')
+    ->name('report-cards.class-summary');
+
+Route::get('/class/{rombel}/report-cards/{semester}/batch-pdf', [ReportCardController::class, 'batchPdf'])
+    ->middleware('auth')
+    ->name('report-cards.batch-pdf');
